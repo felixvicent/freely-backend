@@ -53,7 +53,7 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
   }
 
-  @PutMapping("/{userId}/avatar")
+  @PutMapping("/avatar")
   public ResponseEntity<Object> updateAvatar(@AuthenticationPrincipal UserAccount user,
       @RequestParam("image") MultipartFile file) throws IOException {
 

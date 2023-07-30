@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -23,6 +24,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.freely.backend.client.Client;
 import com.freely.backend.role.Role;
 
 import lombok.Getter;
@@ -54,6 +57,10 @@ public class UserAccount implements UserDetails {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinColumn(name = "role_id")
   private Set<Role> roles = new HashSet<>();
+
+  @OneToMany(mappedBy = "user")
+  @JsonIgnore
+  private Set<Client> clients;
 
   @CreatedDate
   @Column(name = "created_at", nullable = false, updatable = false)

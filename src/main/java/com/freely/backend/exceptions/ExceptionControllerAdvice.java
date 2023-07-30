@@ -42,7 +42,8 @@ public class ExceptionControllerAdvice {
   }
 
   @ResponseBody
-  @ExceptionHandler({ MethodArgumentTypeMismatchException.class, MethodArgumentNotValidException.class })
+  @ExceptionHandler({ MethodArgumentTypeMismatchException.class, MethodArgumentNotValidException.class,
+      BadRequestException.class })
   public ResponseEntity<MessageExceptionHandler> methodArgumentNotValid(
       Exception exception) {
     MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.BAD_REQUEST.value(),
@@ -50,5 +51,4 @@ public class ExceptionControllerAdvice {
 
     return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.BAD_REQUEST);
   }
-
 }
