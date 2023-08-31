@@ -1,11 +1,14 @@
 package com.freely.backend.web.clients;
 
-import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.freely.backend.client.ClientService;
@@ -30,9 +34,12 @@ public class ClientController {
   private ClientService clientService;
 
   @GetMapping
-  public ResponseEntity<List<ClientDTO>> index(@AuthenticationPrincipal UserAccount user) {
+  public ResponseEntity<Page<ClientDTO>> index(
+      @PageableDefault(page = 0, size = 10, sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
+      @RequestParam String query,
+      @AuthenticationPrincipal UserAccount user) {
 
-    List<ClientDTO> clients = clientService.findAll(user);
+    Page<ClientDTO> clients = clientService.findAll(user, query, pageable);
 
     return ResponseEntity.ok(clients);
   }

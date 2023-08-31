@@ -1,11 +1,12 @@
 package com.freely.backend.client;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.freely.backend.exceptions.ResourceNotFoundException;
@@ -19,12 +20,8 @@ public class ClientService {
   @Autowired
   private ClientRepository clientRepository;
 
-  public List<ClientDTO> findAll(UserAccount user) {
-    List<Client> clients = clientRepository.findByUser(user);
-
-    List<ClientDTO> parsedClients = clients.stream().map(client -> entityToDTO(client)).toList();
-
-    return parsedClients;
+  public Page<ClientDTO> findAll(UserAccount user, String query, Pageable pageable) {
+    return clientRepository.findByUser(user, query, pageable).map(client -> entityToDTO(client));
   }
 
   public ClientDTO create(ClientForm form, UserAccount user) {
@@ -81,7 +78,7 @@ public class ClientService {
         .lastName(client.getLastName())
         .telephone(client.getTelephone())
         .document(client.getDocument())
-        .email(client.getDocument())
+        .email(client.getEmail())
         .createdAt(client.getCreatedAt())
         .address(AddressDTO.builder()
             .id(client.getAddress().getId())
