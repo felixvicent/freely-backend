@@ -35,8 +35,8 @@ public class ClientController {
 
   @GetMapping
   public ResponseEntity<Page<ClientDTO>> index(
-      @PageableDefault(page = 0, size = 10, sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
-      @RequestParam String query,
+      @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
+      @RequestParam(defaultValue = "") String query,
       @AuthenticationPrincipal UserAccount user) {
 
     Page<ClientDTO> clients = clientService.findAll(user, query, pageable);

@@ -37,10 +37,10 @@ public class Address {
   @Column(nullable = false)
   private String state;
 
-  @Column(nullable = true)
+  @Column()
   private String complement;
 
-  @Column(nullable = true)
+  @Column()
   private String reference;
 
   @OneToOne(mappedBy = "address")

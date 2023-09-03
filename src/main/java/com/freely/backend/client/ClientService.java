@@ -21,7 +21,7 @@ public class ClientService {
   private ClientRepository clientRepository;
 
   public Page<ClientDTO> findAll(UserAccount user, String query, Pageable pageable) {
-    return clientRepository.findByUser(user, query, pageable).map(client -> entityToDTO(client));
+    return clientRepository.findByUser(user, query, pageable).map(this::entityToDTO);
   }
 
   public ClientDTO create(ClientForm form, UserAccount user) {
@@ -42,7 +42,7 @@ public class ClientService {
   public ClientDTO update(ClientForm form, UUID clientId, UserAccount user) {
     Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
 
-    if (!client.isPresent()) {
+    if (client.isEmpty()) {
       throw new ResourceNotFoundException("Cliente não encontrado");
     }
 
@@ -64,7 +64,7 @@ public class ClientService {
   public void delete(UUID clientId, UserAccount user) {
     Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
 
-    if (!client.isPresent()) {
+    if (client.isEmpty()) {
       throw new ResourceNotFoundException("Cliente não encontrado");
     }
 
