@@ -1,5 +1,6 @@
 package com.freely.backend.client;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,79 +18,94 @@ import com.freely.backend.web.clients.dto.ClientForm;
 
 @Service
 public class ClientService {
-  @Autowired
-  private ClientRepository clientRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
-  public Page<ClientDTO> findAll(UserAccount user, String query, Pageable pageable) {
-    return clientRepository.findByUser(user, query, pageable).map(this::entityToDTO);
-  }
-
-  public ClientDTO create(ClientForm form, UserAccount user) {
-    Client newClient = new Client();
-    Address newAddress = new Address();
-
-    BeanUtils.copyProperties(form, newClient);
-    BeanUtils.copyProperties(form.getAddress(), newAddress);
-
-    newClient.setUser(user);
-    newClient.setAddress(newAddress);
-
-    Client savedClient = clientRepository.save(newClient);
-
-    return entityToDTO(savedClient);
-  }
-
-  public ClientDTO update(ClientForm form, UUID clientId, UserAccount user) {
-    Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
-
-    if (client.isEmpty()) {
-      throw new ResourceNotFoundException("Cliente não encontrado");
+    public Page<ClientDTO> findAll(UserAccount user, String query, Pageable pageable) {
+        return clientRepository.findByUser(user, query, pageable).map(this::entityToDTO);
     }
 
-    Client updatedClient = new Client();
-    Address updatedAddress = new Address();
+    public ClientDTO create(ClientForm form, UserAccount user) {
+        Client newClient = new Client();
+        Address newAddress = new Address();
 
-    BeanUtils.copyProperties(form, updatedClient);
-    BeanUtils.copyProperties(form.getAddress(), updatedAddress);
+        BeanUtils.copyProperties(form, newClient);
+        BeanUtils.copyProperties(form.getAddress(), newAddress);
 
-    updatedClient.setId(clientId);
-    updatedClient.setUser(user);
-    updatedClient.setAddress(updatedAddress);
+        newClient.setUser(user);
+        newClient.setAddress(newAddress);
 
-    Client savedClient = clientRepository.save(updatedClient);
+        Client savedClient = clientRepository.save(newClient);
 
-    return entityToDTO(savedClient);
-  }
-
-  public void delete(UUID clientId, UserAccount user) {
-    Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
-
-    if (client.isEmpty()) {
-      throw new ResourceNotFoundException("Cliente não encontrado");
+        return entityToDTO(savedClient);
     }
 
-    clientRepository.delete(client.get());
-  }
+    public ClientDTO update(ClientForm form, UUID clientId, UserAccount user) {
+        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
 
-  private ClientDTO entityToDTO(Client client) {
-    return ClientDTO.builder()
-        .id(client.getId())
-        .firstName(client.getFirstName())
-        .lastName(client.getLastName())
-        .telephone(client.getTelephone())
-        .document(client.getDocument())
-        .email(client.getEmail())
-        .createdAt(client.getCreatedAt())
-        .address(AddressDTO.builder()
-            .id(client.getAddress().getId())
-            .street(client.getAddress().getStreet())
-            .number(client.getAddress().getNumber())
-            .zipCode(client.getAddress().getZipCode())
-            .city(client.getAddress().getCity())
-            .state(client.getAddress().getState())
-            .complement(client.getAddress().getComplement())
-            .reference(client.getAddress().getReference())
-            .build())
-        .build();
-  }
+        if (client.isEmpty()) {
+            throw new ResourceNotFoundException("Cliente não encontrado");
+        }
+
+        Client updatedClient = new Client();
+        Address updatedAddress = new Address();
+
+        BeanUtils.copyProperties(form, updatedClient);
+        BeanUtils.copyProperties(form.getAddress(), updatedAddress);
+
+        updatedClient.setId(clientId);
+        updatedClient.setUser(user);
+        updatedClient.setAddress(updatedAddress);
+
+        Client savedClient = clientRepository.save(updatedClient);
+
+        return entityToDTO(savedClient);
+    }
+
+    public void delete(UUID clientId, UserAccount user) {
+        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
+
+        if (client.isEmpty()) {
+            throw new ResourceNotFoundException("Cliente não encontrado");
+        }
+
+        clientRepository.delete(client.get());
+    }
+
+    public List<ClientDTO> getSuggestion(String query, UserAccount user) {
+        return clientRepository.findSuggestions(query, user.getId()).stream().map(this::entityToDTO).toList();
+    }
+
+    public ClientDTO findById(UUID clientId, UserAccount user) {
+        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
+
+        if (client.isEmpty()) {
+            throw new ResourceNotFoundException("Cliente não encontrado");
+        }
+
+        return entityToDTO(client.get());
+    }
+
+
+    private ClientDTO entityToDTO(Client client) {
+        return ClientDTO.builder()
+                .id(client.getId())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
+                .telephone(client.getTelephone())
+                .document(client.getDocument())
+                .email(client.getEmail())
+                .createdAt(client.getCreatedAt())
+                .address(AddressDTO.builder()
+                        .id(client.getAddress().getId())
+                        .street(client.getAddress().getStreet())
+                        .number(client.getAddress().getNumber())
+                        .zipCode(client.getAddress().getZipCode())
+                        .city(client.getAddress().getCity())
+                        .state(client.getAddress().getState())
+                        .complement(client.getAddress().getComplement())
+                        .reference(client.getAddress().getReference())
+                        .build())
+                .build();
+    }
 }

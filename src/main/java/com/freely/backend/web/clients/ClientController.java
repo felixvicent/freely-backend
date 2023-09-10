@@ -1,5 +1,7 @@
 package com.freely.backend.web.clients;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -30,42 +32,62 @@ import com.freely.backend.web.clients.dto.ClientForm;
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
-  @Autowired
-  private ClientService clientService;
+    @Autowired
+    private ClientService clientService;
 
-  @GetMapping
-  public ResponseEntity<Page<ClientDTO>> index(
-      @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
-      @RequestParam(defaultValue = "") String query,
-      @AuthenticationPrincipal UserAccount user) {
+    @GetMapping
+    public ResponseEntity<Page<ClientDTO>> index(
+            @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(defaultValue = "") String query,
+            @AuthenticationPrincipal UserAccount user) {
 
-    Page<ClientDTO> clients = clientService.findAll(user, query, pageable);
+        Page<ClientDTO> clients = clientService.findAll(user, query, pageable);
 
-    return ResponseEntity.ok(clients);
-  }
+        return ResponseEntity.ok(clients);
+    }
 
-  @PostMapping
-  public ResponseEntity<ClientDTO> store(@AuthenticationPrincipal UserAccount user,
-      @Valid @RequestBody ClientForm form) {
+    @PostMapping
+    public ResponseEntity<ClientDTO> store(@AuthenticationPrincipal UserAccount user,
+                                           @Valid @RequestBody ClientForm form) {
 
-    ClientDTO createClient = clientService.create(form, user);
+        ClientDTO createClient = clientService.create(form, user);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(createClient);
-  }
+        return ResponseEntity.status(HttpStatus.CREATED).body(createClient);
+    }
 
-  @PutMapping("/{clientId}")
-  public ResponseEntity<ClientDTO> update(@AuthenticationPrincipal UserAccount user,
-      @Valid @RequestBody ClientForm form, @PathVariable UUID clientId) {
+    @PutMapping("/{clientId}")
+    public ResponseEntity<ClientDTO> update(@AuthenticationPrincipal UserAccount user,
+                                            @Valid @RequestBody ClientForm form, @PathVariable UUID clientId) {
 
-    ClientDTO updatedClient = clientService.update(form, clientId, user);
+        ClientDTO updatedClient = clientService.update(form, clientId, user);
 
-    return ResponseEntity.status(HttpStatus.OK).body(updatedClient);
-  }
+        return ResponseEntity.status(HttpStatus.OK).body(updatedClient);
+    }
 
-  @DeleteMapping("/{clientId}")
-  public ResponseEntity<?> delete(@AuthenticationPrincipal UserAccount user, @PathVariable UUID clientId) {
-    clientService.delete(clientId, user);
+    @DeleteMapping("/{clientId}")
+    public ResponseEntity<?> delete(@AuthenticationPrincipal UserAccount user, @PathVariable UUID clientId) {
+        clientService.delete(clientId, user);
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/suggestion")
+    public ResponseEntity<List<ClientDTO>> getSuggestion(
+            @AuthenticationPrincipal UserAccount user,
+            @RequestParam String query,
+            @RequestParam(required = false) UUID selectedClientId) {
+
+        if (selectedClientId != null) {
+            ClientDTO client = clientService.findById(selectedClientId, user);
+
+            List<ClientDTO> clients = new ArrayList<>();
+            clients.add(client);
+
+            return ResponseEntity.status(HttpStatus.OK).body(clients);
+        }
+        List<ClientDTO> clients = clientService.getSuggestion(query, user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(clients);
+    }
+
 }
