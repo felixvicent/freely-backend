@@ -4,7 +4,6 @@ import com.freely.backend.project.ProjectService;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.project.dto.ProjectForm;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

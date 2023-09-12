@@ -1,21 +1,17 @@
 package com.freely.backend.web.project.dto;
 
-import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.project.ActivityStatusEnum;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Data
 @Builder
-public class ProjectDTO {
+public class ActivityDTO {
     private UUID id;
     private String title;
-    private ClientDTO client;
-    private double value;
-    private LocalDateTime estimedDate;
+    private ActivityStatusEnum status;
     private LocalDateTime createdAt;
-    private Set<ActivityDTO> activities;
 }

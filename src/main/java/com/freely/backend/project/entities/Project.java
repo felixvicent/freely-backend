@@ -1,4 +1,4 @@
-package com.freely.backend.project;
+package com.freely.backend.project.entities;
 
 import com.freely.backend.client.Client;
 import com.freely.backend.user.UserAccount;
@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -43,6 +45,9 @@ public class Project {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "project")
+    private Set<Activity> activies = new HashSet<>();
 
     @PrePersist
     public void setCreatedAt() {

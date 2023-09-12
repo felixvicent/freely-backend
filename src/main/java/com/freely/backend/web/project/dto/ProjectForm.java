@@ -1,9 +1,10 @@
 package com.freely.backend.web.project.dto;
 
-import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.web.project.dto.ActivityForm;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -12,4 +13,5 @@ public class ProjectForm {
     private UUID clientId;
     private double value;
     private LocalDateTime estimedDate;
+    private List<ActivityForm> activities;
 }

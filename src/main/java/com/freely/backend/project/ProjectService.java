@@ -3,9 +3,14 @@ package com.freely.backend.project;
 import com.freely.backend.client.Client;
 import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
+import com.freely.backend.project.entities.Activity;
+import com.freely.backend.project.entities.Project;
+import com.freely.backend.project.repositories.ActivityRepository;
+import com.freely.backend.project.repositories.ProjectRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.clients.dto.AddressDTO;
 import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.web.project.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.project.dto.ProjectForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +18,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -24,10 +30,14 @@ public class ProjectService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ActivityRepository activityRepository;
+
     public Page<ProjectDTO> findAll(UserAccount user, Pageable pageable) {
         return projectRepository.findByUser(user, pageable).map(this::entityToDTO);
     }
 
+    @Transactional
     public ProjectDTO save(UserAccount user, ProjectForm form) {
         Optional<Client> client = clientRepository.findByIdAndUser(form.getClientId(), user);
 
@@ -43,10 +53,23 @@ public class ProjectService {
         newProject.setClient(client.get());
         newProject.setUser(user);
 
+        projectRepository.save(newProject);
+
+        form.getActivities().forEach(activityForm -> {
+            Activity activity = new Activity();
+            activity.setTitle(activityForm.getTitle());
+            activity.setStatus(ActivityStatusEnum.PENDING);
+            activity.setProject(newProject);
+
+            activityRepository.save(activity);
+        });
+
+
         return entityToDTO(projectRepository.save(newProject));
 
     }
 
+    @Transactional
     public ProjectDTO update(UserAccount user, ProjectForm form, UUID id) {
         Optional<Project> project = projectRepository.findByIdAndUser(id, user);
 
@@ -66,6 +89,21 @@ public class ProjectService {
         updatedProject.setValue(form.getValue());
         updatedProject.setEstimedDate(form.getEstimedDate());
         updatedProject.setClient(client.get());
+
+        projectRepository.save(updatedProject);
+
+        updatedProject.getActivies().forEach(activity -> {
+            activityRepository.delete(activity);
+        });
+
+        form.getActivities().forEach(activityForm -> {
+            Activity activity = new Activity();
+            activity.setTitle(activityForm.getTitle());
+            activity.setStatus(ActivityStatusEnum.PENDING);
+            activity.setProject(updatedProject);
+
+            activityRepository.save(activity);
+        });
 
         return entityToDTO(projectRepository.save(updatedProject));
 
@@ -107,6 +145,12 @@ public class ProjectService {
                                 .zipCode(project.getClient().getAddress().getZipCode())
                                 .build())
                         .build())
+                .activities(project.getActivies().stream().map(activity -> ActivityDTO.builder()
+                        .id(activity.getId())
+                        .title(activity.getTitle())
+                        .status(activity.getStatus())
+                        .createdAt(activity.getCreatedAt())
+                        .build()).collect(Collectors.toSet()))
                 .build();
     }
 }
