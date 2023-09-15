@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,12 @@ public class ClientService {
     }
 
     public ClientDTO create(ClientForm form, UserAccount user) {
+        Optional<Client> client = clientRepository.findByDocumentAndUser(form.getDocument(), user);
+
+        if (client.isPresent()) {
+            throw new ResourceAlreadyExistsException("Já existe cliente com esse CPF/CNPJ");
+        }
+
         Client newClient = new Client();
         Address newAddress = new Address();
 

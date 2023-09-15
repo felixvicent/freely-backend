@@ -30,48 +30,48 @@ import lombok.Setter;
 @Setter
 @Table(name = "clients")
 public class Client {
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
-  @Column(nullable = false, name = "first_name")
-  private String firstName;
+    @Column(nullable = false, name = "first_name")
+    private String firstName;
 
-  @Column(nullable = false, name = "last_name")
-  private String lastName;
+    @Column(name = "last_name")
+    private String lastName;
 
-  @Column(nullable = false)
-  private String telephone;
+    @Column(nullable = false)
+    private String telephone;
 
-  @Column(nullable = false)
-  private String email;
+    @Column(nullable = false)
+    private String email;
 
-  @Column(nullable = false)
-  private String document;
+    @Column(nullable = false)
+    private String document;
 
-  @CreatedDate
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-  @LastModifiedDate
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-  @OneToOne(cascade = CascadeType.ALL)
-  @JoinColumn(name = "address_id")
-  private Address address;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserAccount user;
 
-  @PrePersist
-  public void setCreatedAt() {
-    createdAt = LocalDateTime.now();
-  }
+    @PrePersist
+    public void setCreatedAt() {
+        createdAt = LocalDateTime.now();
+    }
 
-  @PreUpdate
-  public void setUpdatedAt() {
-    updatedAt = LocalDateTime.now();
-  }
+    @PreUpdate
+    public void setUpdatedAt() {
+        updatedAt = LocalDateTime.now();
+    }
 }

@@ -13,6 +13,8 @@ import java.util.Optional;
 
 import com.freely.backend.user.UserAccount;
 
+import javax.swing.text.html.Option;
+
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
     @Query("SELECT client FROM Client client WHERE client.user = :user AND (LOWER(firstName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(lastName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
@@ -22,4 +24,7 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId AND (LOWER(first_name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(last_name) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
     List<Client> findSuggestions(String query, UUID userId);
+
+    Optional<Client> findByDocumentAndUser(String document, UserAccount user);
+
 }
