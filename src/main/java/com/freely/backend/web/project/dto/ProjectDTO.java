@@ -1,11 +1,11 @@
 package com.freely.backend.web.project.dto;
 
-import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.web.clients.dto.ClientListDTO;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,9 +13,9 @@ import java.util.UUID;
 public class ProjectDTO {
     private UUID id;
     private String title;
-    private ClientDTO client;
+    private ClientListDTO client;
     private double value;
-    private LocalDateTime estimedDate;
+    private LocalDateTime estimatedDate;
     private LocalDateTime createdAt;
-    private Set<ActivityDTO> activities;
+    private List<ActivityDTO> activities;
 }

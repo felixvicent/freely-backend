@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.freely.backend.web.clients.dto.ClientPageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.freely.backend.client.ClientService;
 import com.freely.backend.user.UserAccount;
-import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.web.clients.dto.ClientListDTO;
 import com.freely.backend.web.clients.dto.ClientForm;
 
 @RestController
@@ -36,30 +37,37 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping
-    public ResponseEntity<Page<ClientDTO>> index(
+    public ResponseEntity<Page<ClientListDTO>> index(
             @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(defaultValue = "") String query,
             @AuthenticationPrincipal UserAccount user) {
 
-        Page<ClientDTO> clients = clientService.findAll(user, query, pageable);
+        Page<ClientListDTO> clients = clientService.findAll(user, query, pageable);
 
         return ResponseEntity.ok(clients);
     }
 
-    @PostMapping
-    public ResponseEntity<ClientDTO> store(@AuthenticationPrincipal UserAccount user,
-                                           @Valid @RequestBody ClientForm form) {
+    @GetMapping("/{clientId}")
+    public ResponseEntity<ClientPageDTO> show(@PathVariable UUID clientId, @AuthenticationPrincipal UserAccount user) {
+        ClientPageDTO client = clientService.findById(clientId, user);
 
-        ClientDTO createClient = clientService.create(form, user);
+        return ResponseEntity.status(HttpStatus.OK).body(client);
+    }
+
+    @PostMapping
+    public ResponseEntity<ClientListDTO> store(@AuthenticationPrincipal UserAccount user,
+                                               @Valid @RequestBody ClientForm form) {
+
+        ClientListDTO createClient = clientService.create(form, user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createClient);
     }
 
     @PutMapping("/{clientId}")
-    public ResponseEntity<ClientDTO> update(@AuthenticationPrincipal UserAccount user,
-                                            @Valid @RequestBody ClientForm form, @PathVariable UUID clientId) {
+    public ResponseEntity<ClientListDTO> update(@AuthenticationPrincipal UserAccount user,
+                                                @Valid @RequestBody ClientForm form, @PathVariable UUID clientId) {
 
-        ClientDTO updatedClient = clientService.update(form, clientId, user);
+        ClientListDTO updatedClient = clientService.update(form, clientId, user);
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedClient);
     }
@@ -72,20 +80,19 @@ public class ClientController {
     }
 
     @GetMapping("/suggestion")
-    public ResponseEntity<List<ClientDTO>> getSuggestion(
+    public ResponseEntity<List<ClientListDTO>> getSuggestion(
             @AuthenticationPrincipal UserAccount user,
             @RequestParam String query,
             @RequestParam(required = false) UUID selectedClientId) {
 
         if (selectedClientId != null) {
-            ClientDTO client = clientService.findById(selectedClientId, user);
+            ClientPageDTO client = clientService.findById(selectedClientId, user);
 
-            List<ClientDTO> clients = new ArrayList<>();
-            clients.add(client);
+            List<ClientListDTO> clients = clientService.getSuggestion(client.getFirstName(), user);
 
             return ResponseEntity.status(HttpStatus.OK).body(clients);
         }
-        List<ClientDTO> clients = clientService.getSuggestion(query, user);
+        List<ClientListDTO> clients = clientService.getSuggestion(query, user);
 
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }

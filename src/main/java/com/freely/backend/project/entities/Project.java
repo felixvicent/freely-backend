@@ -35,8 +35,8 @@ public class Project {
     @Column(nullable = false)
     private double value;
 
-    @Column(name = "estimed_date", nullable = false)
-    private LocalDateTime estimedDate;
+    @Column(name = "estimated_date", nullable = false)
+    private LocalDateTime estimatedDate;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -47,7 +47,7 @@ public class Project {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "project")
-    private Set<Activity> activies = new HashSet<>();
+    private Set<Activity> activities = new HashSet<>();
 
     @PrePersist
     public void setCreatedAt() {

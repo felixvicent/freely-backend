@@ -8,8 +8,7 @@ import com.freely.backend.project.entities.Project;
 import com.freely.backend.project.repositories.ActivityRepository;
 import com.freely.backend.project.repositories.ProjectRepository;
 import com.freely.backend.user.UserAccount;
-import com.freely.backend.web.clients.dto.AddressDTO;
-import com.freely.backend.web.clients.dto.ClientDTO;
+import com.freely.backend.web.clients.dto.ClientListDTO;
 import com.freely.backend.web.project.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.project.dto.ProjectForm;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -49,7 +47,7 @@ public class ProjectService {
 
         newProject.setTitle(form.getTitle());
         newProject.setValue(form.getValue());
-        newProject.setEstimedDate(form.getEstimedDate());
+        newProject.setEstimatedDate(form.getEstimedDate());
         newProject.setClient(client.get());
         newProject.setUser(user);
 
@@ -87,14 +85,12 @@ public class ProjectService {
 
         updatedProject.setTitle(form.getTitle());
         updatedProject.setValue(form.getValue());
-        updatedProject.setEstimedDate(form.getEstimedDate());
+        updatedProject.setEstimatedDate(form.getEstimedDate());
         updatedProject.setClient(client.get());
 
         projectRepository.save(updatedProject);
 
-        updatedProject.getActivies().forEach(activity -> {
-            activityRepository.delete(activity);
-        });
+        updatedProject.getActivities().forEach(activity -> activityRepository.delete(activity));
 
         form.getActivities().forEach(activityForm -> {
             Activity activity = new Activity();
@@ -125,32 +121,21 @@ public class ProjectService {
                 .id(project.getId())
                 .title(project.getTitle())
                 .value(project.getValue())
-                .estimedDate(project.getEstimedDate())
+                .estimatedDate(project.getEstimatedDate())
                 .createdAt(project.getCreatedAt())
-                .client(ClientDTO.builder()
+                .client(ClientListDTO.builder()
                         .id(project.getClient().getId())
                         .email(project.getClient().getEmail())
                         .firstName(project.getClient().getFirstName())
                         .lastName(project.getClient().getLastName())
-                        .document(project.getClient().getDocument())
-                        .createdAt(project.getClient().getCreatedAt())
-                        .address(AddressDTO.builder()
-                                .id(project.getClient().getAddress().getId())
-                                .city(project.getClient().getAddress().getCity())
-                                .complement(project.getClient().getAddress().getComplement())
-                                .state(project.getClient().getAddress().getState())
-                                .number(project.getClient().getAddress().getNumber())
-                                .street(project.getClient().getAddress().getStreet())
-                                .reference(project.getClient().getAddress().getReference())
-                                .zipCode(project.getClient().getAddress().getZipCode())
-                                .build())
+                        .quantityOfProjects(project.getClient().getProjects().size())
                         .build())
-                .activities(project.getActivies().stream().map(activity -> ActivityDTO.builder()
+                .activities(project.getActivities().stream().map(activity -> ActivityDTO.builder()
                         .id(activity.getId())
                         .title(activity.getTitle())
                         .status(activity.getStatus())
                         .createdAt(activity.getCreatedAt())
-                        .build()).collect(Collectors.toSet()))
+                        .build()).toList())
                 .build();
     }
 }
