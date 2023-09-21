@@ -1,6 +1,6 @@
 package com.freely.backend.web.project.dto;
 
-import com.freely.backend.web.project.dto.ActivityForm;
+import com.freely.backend.web.activity.dto.ActivityForm;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -12,6 +12,6 @@ public class ProjectForm {
     private String title;
     private UUID clientId;
     private double value;
-    private LocalDateTime estimedDate;
+    private LocalDateTime estimatedDate;
     private List<ActivityForm> activities;
 }

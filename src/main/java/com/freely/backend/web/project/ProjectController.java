@@ -32,6 +32,14 @@ public class ProjectController {
 
     }
 
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectDTO> show(@PathVariable UUID projectId, @AuthenticationPrincipal UserAccount user) {
+        ProjectDTO project = projectService.findById(projectId, user);
+
+        return ResponseEntity.ok(project);
+    }
+
+
     @PostMapping
     public ResponseEntity<ProjectDTO> store(@AuthenticationPrincipal UserAccount user, @RequestBody ProjectForm form) {
         return ResponseEntity.ok(projectService.save(user, form));

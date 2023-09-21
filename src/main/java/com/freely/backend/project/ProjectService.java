@@ -3,9 +3,8 @@ package com.freely.backend.project;
 import com.freely.backend.client.Client;
 import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
-import com.freely.backend.project.entities.Activity;
-import com.freely.backend.project.entities.Project;
-import com.freely.backend.project.repositories.ActivityRepository;
+import com.freely.backend.activity.Activity;
+import com.freely.backend.activity.ActivityRepository;
 import com.freely.backend.project.repositories.ProjectRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.clients.dto.ClientListDTO;
@@ -35,6 +34,17 @@ public class ProjectService {
         return projectRepository.findByUser(user, pageable).map(this::entityToDTO);
     }
 
+    public ProjectDTO findById(UUID projectId, UserAccount user) {
+        Optional<Project> project = projectRepository.findByIdAndUser(projectId, user);
+
+        if (project.isEmpty()) {
+            throw new ResourceNotFoundException("Projeto não existe");
+        }
+
+        return entityToDTO(project.get());
+    }
+
+
     @Transactional
     public ProjectDTO save(UserAccount user, ProjectForm form) {
         Optional<Client> client = clientRepository.findByIdAndUser(form.getClientId(), user);
@@ -47,7 +57,7 @@ public class ProjectService {
 
         newProject.setTitle(form.getTitle());
         newProject.setValue(form.getValue());
-        newProject.setEstimatedDate(form.getEstimedDate());
+        newProject.setEstimatedDate(form.getEstimatedDate());
         newProject.setClient(client.get());
         newProject.setUser(user);
 
@@ -85,21 +95,10 @@ public class ProjectService {
 
         updatedProject.setTitle(form.getTitle());
         updatedProject.setValue(form.getValue());
-        updatedProject.setEstimatedDate(form.getEstimedDate());
+        updatedProject.setEstimatedDate(form.getEstimatedDate());
         updatedProject.setClient(client.get());
 
         projectRepository.save(updatedProject);
-
-        updatedProject.getActivities().forEach(activity -> activityRepository.delete(activity));
-
-        form.getActivities().forEach(activityForm -> {
-            Activity activity = new Activity();
-            activity.setTitle(activityForm.getTitle());
-            activity.setStatus(ActivityStatusEnum.PENDING);
-            activity.setProject(updatedProject);
-
-            activityRepository.save(activity);
-        });
 
         return entityToDTO(projectRepository.save(updatedProject));
 
@@ -111,6 +110,8 @@ public class ProjectService {
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
         }
+
+        project.get().getActivities().forEach(activity -> activityRepository.delete(activity));
 
 
         projectRepository.delete(project.get());
@@ -128,6 +129,7 @@ public class ProjectService {
                         .email(project.getClient().getEmail())
                         .firstName(project.getClient().getFirstName())
                         .lastName(project.getClient().getLastName())
+                        .telephone(project.getClient().getTelephone())
                         .quantityOfProjects(project.getClient().getProjects().size())
                         .build())
                 .activities(project.getActivities().stream().map(activity -> ActivityDTO.builder()

@@ -8,7 +8,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.freely.backend.project.entities.Project;
+import com.freely.backend.project.Project;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -41,6 +41,7 @@ public class Client {
     @Column(nullable = false)
     private String document;
 
+    @OrderBy("created_at DESC")
     @OneToMany(mappedBy = "client")
     @JsonIgnore
     private Set<Project> projects = new HashSet<>();

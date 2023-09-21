@@ -1,6 +1,6 @@
 package com.freely.backend.project.repositories;
 
-import com.freely.backend.project.entities.Project;
+import com.freely.backend.project.Project;
 import com.freely.backend.user.UserAccount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

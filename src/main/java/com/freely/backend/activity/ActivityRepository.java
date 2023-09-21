@@ -1,6 +1,5 @@
-package com.freely.backend.project.repositories;
+package com.freely.backend.activity;
 
-import com.freely.backend.project.entities.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
