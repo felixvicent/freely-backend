@@ -5,7 +5,6 @@ import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
 import com.freely.backend.activity.Activity;
 import com.freely.backend.activity.ActivityRepository;
-import com.freely.backend.project.repositories.ProjectRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.clients.dto.ClientListDTO;
 import com.freely.backend.web.project.dto.ActivityDTO;
@@ -42,6 +41,14 @@ public class ProjectService {
         }
 
         return entityToDTO(project.get());
+    }
+
+    public List<ProjectDTO> findLatest(UserAccount user) {
+        return projectRepository.findLatest(user.getId()).stream().map(this::entityToDTO).toList();
+    }
+
+    public long countByUser(UserAccount user) {
+        return projectRepository.countByUser(user);
     }
 
 

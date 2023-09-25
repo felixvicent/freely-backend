@@ -3,13 +3,14 @@ package com.freely.backend.activity;
 import com.freely.backend.exceptions.ResourceNotFoundException;
 import com.freely.backend.project.ActivityStatusEnum;
 import com.freely.backend.project.Project;
-import com.freely.backend.project.repositories.ProjectRepository;
+import com.freely.backend.project.ProjectRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
 import com.freely.backend.web.project.dto.ActivityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,14 @@ public class ActivityService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    public long countByUser(UserAccount user) {
+        return activityRepository.countByUser(user);
+    }
+
+    public List<ActivityDTO> findLatest(UserAccount user) {
+        return activityRepository.findLatest(user.getId()).stream().map(this::entityToDTO).toList();
+    }
 
     public ActivityDTO create(ActivityForm form, UserAccount user) {
         Optional<Project> project = projectRepository.findByIdAndUser(form.getProjectId(), user);
@@ -71,6 +80,7 @@ public class ActivityService {
                 .id(activity.getId())
                 .title(activity.getTitle())
                 .status(activity.getStatus())
+                .createdAt(activity.getCreatedAt())
                 .build();
     }
 }

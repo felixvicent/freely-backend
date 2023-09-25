@@ -27,4 +27,9 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Optional<Client> findByDocumentAndUser(String document, UserAccount user);
 
+    Long countByUser(UserAccount user);
+
+    @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId LIMIT 5", nativeQuery = true)
+    List<Client> findLatest(UUID userId);
+
 }

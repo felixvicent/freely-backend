@@ -29,6 +29,10 @@ public class ClientService {
         return clientRepository.findByUser(user, query, pageable).map(this::entityToListDTO);
     }
 
+    public List<ClientListDTO> findLatest(UserAccount user) {
+        return clientRepository.findLatest(user.getId()).stream().map(this::entityToListDTO).toList();
+    }
+
     public ClientListDTO create(ClientForm form, UserAccount user) {
         Optional<Client> client = clientRepository.findByDocumentAndUser(form.getDocument(), user);
 
@@ -94,6 +98,10 @@ public class ClientService {
         }
 
         return entityToPageDTO(client.get());
+    }
+
+    public long countByUser(UserAccount user) {
+        return clientRepository.countByUser(user);
     }
 
 
