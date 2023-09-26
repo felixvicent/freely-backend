@@ -7,6 +7,7 @@ import com.freely.backend.project.ProjectRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
 import com.freely.backend.web.project.dto.ActivityDTO;
+import com.freely.backend.web.project.dto.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +82,11 @@ public class ActivityService {
                 .title(activity.getTitle())
                 .status(activity.getStatus())
                 .createdAt(activity.getCreatedAt())
+                .project(ProjectDTO.builder()
+                        .id(activity.getProject().getId())
+                        .value(activity.getProject().getValue())
+                        .title(activity.getProject().getTitle())
+                        .build())
                 .build();
     }
 }

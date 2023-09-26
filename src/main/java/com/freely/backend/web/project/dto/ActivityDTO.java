@@ -13,5 +13,6 @@ public class ActivityDTO {
     private UUID id;
     private String title;
     private ActivityStatusEnum status;
+    private ProjectDTO project;
     private LocalDateTime createdAt;
 }

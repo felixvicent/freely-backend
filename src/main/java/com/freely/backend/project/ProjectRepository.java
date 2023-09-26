@@ -1,7 +1,5 @@
 package com.freely.backend.project;
 
-import com.freely.backend.client.Client;
-import com.freely.backend.project.Project;
 import com.freely.backend.user.UserAccount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +19,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Long countByUser(UserAccount user);
 
-    @Query(value = "SELECT project.* FROM projects project WHERE project.user_id = :userId LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT project.* FROM projects project WHERE project.user_id = :userId ORDER BY project.created_at DESC LIMIT 5", nativeQuery = true)
     List<Project> findLatest(UUID userId);
 }

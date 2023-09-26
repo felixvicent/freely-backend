@@ -15,6 +15,6 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     @Query("SELECT COUNT(*) FROM Activity activity LEFT JOIN activity.project project WHERE project.user = :user")
     long countByUser(UserAccount user);
 
-    @Query(value = "SELECT activity.* FROM activities activity LEFT JOIN projects project ON (project.id = activity.project_id) WHERE project.user_id = :userId LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT activity.* FROM activities activity LEFT JOIN projects project ON (project.id = activity.project_id) WHERE project.user_id = :userId ORDER BY activity.created_at DESC LIMIT 5", nativeQuery = true)
     List<Activity> findLatest(UUID userId);
 }

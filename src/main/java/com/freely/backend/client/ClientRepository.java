@@ -13,8 +13,6 @@ import java.util.Optional;
 
 import com.freely.backend.user.UserAccount;
 
-import javax.swing.text.html.Option;
-
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
     @Query("SELECT client FROM Client client WHERE client.user = :user AND (LOWER(firstName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(lastName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
@@ -29,7 +27,7 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Long countByUser(UserAccount user);
 
-    @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
     List<Client> findLatest(UUID userId);
 
 }
