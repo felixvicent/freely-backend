@@ -31,6 +31,10 @@ public class ActivityService {
         return activityRepository.findLatest(user.getId()).stream().map(this::entityToDTO).toList();
     }
 
+    public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UserAccount user) {
+        return activityRepository.findByStatusAndUser(status, user).stream().map(this::entityToDTO).toList();
+    }
+
     public ActivityDTO create(ActivityForm form, UserAccount user) {
         Optional<Project> project = projectRepository.findByIdAndUser(form.getProjectId(), user);
 
@@ -86,6 +90,7 @@ public class ActivityService {
                         .id(activity.getProject().getId())
                         .value(activity.getProject().getValue())
                         .title(activity.getProject().getTitle())
+                        .estimatedDate(activity.getProject().getEstimatedDate())
                         .build())
                 .build();
     }
