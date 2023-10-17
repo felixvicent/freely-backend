@@ -22,90 +22,109 @@ import com.freely.backend.web.user.dto.UserDTO;
 @Service
 public class UserService {
 
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired
-  private PasswordEncoder encoder;
+    @Autowired
+    private PasswordEncoder encoder;
 
-  public Optional<UserAccount> loadForAuthentication(String email) {
-    return userRepository.findByEmail(email);
-  }
-
-  public Optional<UserAccount> loadForAuthenticationById(UUID id) {
-    return userRepository.findById(id);
-  }
-
-  @Transactional
-  public UserDTO createUser(CreateUserForm form) {
-    if (this.loadForAuthentication(form.getEmail()).isPresent()) {
-      throw new ResourceAlreadyExistsException("Usuário já existe");
+    public Optional<UserAccount> loadForAuthentication(String email) {
+        return userRepository.findByEmail(email);
     }
 
-    var userAccount = new UserAccount();
-    BeanUtils.copyProperties(form, userAccount);
-    userAccount.setPassword(encoder.encode(form.getPassword()));
-
-    var role = new Role(Role.USER_ROLE_ID);
-
-    userAccount.getRoles().add(role);
-    userAccount.setActive(true);
-
-    return entityToDTO(userRepository.save(userAccount));
-  }
-
-  public Page<UserDTO> listAll(Pageable pageable) {
-    Page<UserDTO> users = userRepository.findAll(pageable).map(user -> entityToDTO(user));
-
-    return users;
-  }
-
-  @Transactional
-  public UserDTO updateUser(UserAccount user, UpdateUserForm form) {
-    Optional<UserAccount> userToUpdate = userRepository.findById(user.getId());
-
-    if (!userToUpdate.isPresent()) {
-      throw new ResourceNotFoundException("Usuário não existe");
+    public Optional<UserAccount> loadForAuthenticationById(UUID id) {
+        return userRepository.findById(id);
     }
 
-    var userAccount = new UserAccount();
+    @Transactional
+    public UserDTO createUser(CreateUserForm form) {
+        if (this.loadForAuthentication(form.getEmail()).isPresent()) {
+            throw new ResourceAlreadyExistsException("Usuário já existe");
+        }
 
-    BeanUtils.copyProperties(form, userAccount);
-    userAccount.setId(user.getId());
+        var userAccount = new UserAccount();
+        BeanUtils.copyProperties(form, userAccount);
+        userAccount.setPassword(encoder.encode(form.getPassword()));
 
-    var role = new Role(form.getRole().getId());
+        var role = new Role(Role.USER_ROLE_ID);
 
-    userAccount.getRoles().add(role);
-    userAccount.setPassword(userToUpdate.get().getPassword());
+        userAccount.getRoles().add(role);
+        userAccount.setActive(true);
 
-    return entityToDTO(userRepository.save(userAccount));
-  }
-
-  public void updateUserAvatar(UserAccount user, String avatarUrl) {
-    Optional<UserAccount> userToUpdate = userRepository.findById(user.getId());
-
-    if (!userToUpdate.isPresent()) {
-      throw new ResourceNotFoundException("Usuário não existe");
+        return entityToDTO(userRepository.save(userAccount));
     }
 
-    var userAccount = new UserAccount();
+    public Page<UserDTO> listAll(Pageable pageable) {
 
-    BeanUtils.copyProperties(userToUpdate.get(), userAccount);
+        return userRepository.findAll(pageable).map(this::entityToDTO);
+    }
 
-    userAccount.setAvatar(avatarUrl);
+    @Transactional
+    public UserDTO updateUser(UserAccount user, UpdateUserForm form) {
+        Optional<UserAccount> userToUpdate = userRepository.findById(user.getId());
 
-    userRepository.save(userAccount);
-  }
+        if (userToUpdate.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
 
-  private UserDTO entityToDTO(UserAccount user) {
-    return UserDTO.builder()
-        .id(user.getId())
-        .name(user.getName())
-        .email(user.getEmail())
-        .active(user.isActive())
-        .role(user.getRoles().iterator().next().getName())
-        .createdAt(user.getCreatedAt())
-        .build();
-  }
+        var userAccount = new UserAccount();
+
+        BeanUtils.copyProperties(form, userAccount);
+        userAccount.setId(user.getId());
+
+        var role = new Role(form.getRole().getId());
+
+        userAccount.getRoles().add(role);
+        userAccount.setPassword(userToUpdate.get().getPassword());
+
+        return entityToDTO(userRepository.save(userAccount));
+    }
+
+    public void updateUserAvatar(UserAccount user, String avatarUrl) {
+        Optional<UserAccount> userToUpdate = userRepository.findById(user.getId());
+
+        if (userToUpdate.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
+
+        var userAccount = new UserAccount();
+
+        BeanUtils.copyProperties(userToUpdate.get(), userAccount);
+
+        userAccount.setAvatar(avatarUrl);
+
+        userRepository.save(userAccount);
+    }
+
+    public void createAdmin(String email, String password, String name) {
+        Optional<UserAccount> userExists = userRepository.findByEmail(email);
+
+        if (userExists.isPresent()) {
+            return;
+        }
+
+        UserAccount user = new UserAccount();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(encoder.encode(password));
+
+        var role = new Role(Role.ADMIN_ROLE_ID);
+
+        user.getRoles().add(role);
+        user.setActive(true);
+
+        userRepository.save(user);
+    }
+
+    private UserDTO entityToDTO(UserAccount user) {
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .active(user.isActive())
+                .role(user.getRoles().iterator().next().getName())
+                .createdAt(user.getCreatedAt())
+                .build();
+    }
 
 }
