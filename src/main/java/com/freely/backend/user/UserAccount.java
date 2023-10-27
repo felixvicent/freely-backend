@@ -37,77 +37,80 @@ import lombok.Setter;
 @Table(name = "users")
 public class UserAccount implements UserDetails {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
-  @Column(nullable = false)
-  private String name;
+    @Column(nullable = false)
+    private String name;
 
-  @Column(nullable = false, unique = true)
-  private String email;
+    @Column(nullable = false, unique = true)
+    private String email;
 
-  @Column(nullable = false)
-  private String password;
+    @Column(nullable = false, unique = true)
+    private String document;
 
-  private boolean active;
+    @Column(nullable = false)
+    private String password;
 
-  private String avatar;
+    private boolean active;
 
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinColumn(name = "role_id")
-  private Set<Role> roles = new HashSet<>();
+    private String avatar;
 
-  @OneToMany(mappedBy = "user")
-  @JsonIgnore
-  private Set<Client> clients;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Set<Role> roles = new HashSet<>();
 
-  @CreatedDate
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<Client> clients;
 
-  @LastModifiedDate
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-  @PrePersist
-  public void setCreatedAt() {
-    createdAt = LocalDateTime.now();
-  }
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
-  @PreUpdate
-  public void setUpdatedAt() {
-    updatedAt = LocalDateTime.now();
-  }
+    @PrePersist
+    public void setCreatedAt() {
+        createdAt = LocalDateTime.now();
+    }
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return this.roles;
-  }
+    @PreUpdate
+    public void setUpdatedAt() {
+        updatedAt = LocalDateTime.now();
+    }
 
-  @Override
-  public String getUsername() {
-    return this.email;
-  }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles;
+    }
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return true;
-  }
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return true;
-  }
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
-  @Override
-  public boolean isEnabled() {
-    return this.active;
-  }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.active;
+    }
 
 }

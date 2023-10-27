@@ -6,9 +6,12 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.freely.backend.mail.MailService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
+import com.freely.backend.web.user.dto.CreateUserForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,10 +20,8 @@ import org.springframework.stereotype.Service;
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import com.freely.backend.exceptions.ResourceNotFoundException;
 import com.freely.backend.role.Role;
-import com.freely.backend.web.auth.dto.CreateUserForm;
 import com.freely.backend.web.user.dto.UpdateUserForm;
 import com.freely.backend.web.user.dto.UserDTO;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class UserService {
@@ -30,6 +31,12 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder encoder;
+
+    @Autowired
+    private MailService mailService;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     public Optional<UserAccount> loadForAuthentication(String email) {
         return userRepository.findByEmail(email);
@@ -47,12 +54,20 @@ public class UserService {
 
         var userAccount = new UserAccount();
         BeanUtils.copyProperties(form, userAccount);
-        userAccount.setPassword(encoder.encode(form.getPassword()));
+        userAccount.setPassword("PASSWORD");
 
-        var role = new Role(Role.USER_ROLE_ID);
+        var role = new Role(Role.COMPANY_ROLE_ID);
 
         userAccount.getRoles().add(role);
-        userAccount.setActive(true);
+        userAccount.setActive(false);
+
+        var activeLink = frontendUrl + "/activeAccount?code=" + encoder.encode(userAccount.getEmail());
+
+        mailService.sendMail(
+                userAccount.getEmail(),
+                "Sua conta foi criada, faça a ativação",
+                "Ative sua conta acessando o <a href='" + activeLink + "'>link</a>"
+        );
 
         return entityToDTO(userRepository.save(userAccount));
     }
@@ -113,6 +128,7 @@ public class UserService {
         user.setName(name);
         user.setEmail(email);
         user.setPassword(encoder.encode(password));
+        user.setDocument("11.222.333/0001-44");
 
         var role = new Role(Role.ADMIN_ROLE_ID);
 
