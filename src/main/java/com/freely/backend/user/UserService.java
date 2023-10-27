@@ -1,10 +1,12 @@
 package com.freely.backend.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import com.freely.backend.role.Role;
 import com.freely.backend.web.auth.dto.CreateUserForm;
 import com.freely.backend.web.user.dto.UpdateUserForm;
 import com.freely.backend.web.user.dto.UserDTO;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class UserService {
@@ -55,8 +58,11 @@ public class UserService {
     }
 
     public Page<UserDTO> listAll(Pageable pageable) {
-
         return userRepository.findAll(pageable).map(this::entityToDTO);
+    }
+
+    public Page<UserDTO> listAllByIds(Pageable pageable, List<UUID> usersIds) {
+        return userRepository.findAllByIds(usersIds, pageable).map(this::entityToDTO);
     }
 
     @Transactional
@@ -114,6 +120,10 @@ public class UserService {
         user.setActive(true);
 
         userRepository.save(user);
+    }
+
+    public List<SuggestionDTO> getSuggestion(String query) {
+        return userRepository.findSuggestions(query).stream().map(user -> SuggestionDTO.builder().label(user.getName()).value(user.getId()).build()).toList();
     }
 
     private UserDTO entityToDTO(UserAccount user) {

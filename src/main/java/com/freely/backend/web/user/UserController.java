@@ -1,9 +1,12 @@
 package com.freely.backend.web.user;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,37 +33,53 @@ import com.freely.backend.web.user.dto.UserDTO;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Autowired
-  private UploadService uploadService;
+    @Autowired
+    private UploadService uploadService;
 
-  @GetMapping
-  @PreAuthorize("hasAuthority('ADMIN')")
-  public ResponseEntity<Page<UserDTO>> list(
-      @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-    var users = userService.listAll(pageable);
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Page<UserDTO>> list(
+            @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false, value = "usersIds[]") List<UUID> usersIds) {
 
-    return ResponseEntity.ok(users);
-  }
+        Page<UserDTO> users;
+        if (usersIds == null) {
+            users = userService.listAll(pageable);
+        } else {
+            users = userService.listAllByIds(pageable, usersIds);
+        }
 
-  @PutMapping
-  public ResponseEntity<Object> update(@AuthenticationPrincipal UserAccount user,
-      @RequestBody @Valid UpdateUserForm form) {
-    UserDTO updatedUser = userService.updateUser(user, form);
+        return ResponseEntity.ok(users);
+    }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
-  }
+    @PutMapping
+    public ResponseEntity<Object> update(@AuthenticationPrincipal UserAccount user,
+                                         @RequestBody @Valid UpdateUserForm form) {
+        UserDTO updatedUser = userService.updateUser(user, form);
 
-  @PutMapping("/avatar")
-  public ResponseEntity<Object> updateAvatar(@AuthenticationPrincipal UserAccount user,
-      @RequestParam("image") MultipartFile file) throws IOException {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
+    }
 
-    String uploadedFilePath = uploadService.uploadImage(file, "users");
+    @PutMapping("/avatar")
+    public ResponseEntity<Object> updateAvatar(@AuthenticationPrincipal UserAccount user,
+                                               @RequestParam("image") MultipartFile file) throws IOException {
 
-    userService.updateUserAvatar(user, uploadedFilePath);
+        String uploadedFilePath = uploadService.uploadImage(file, "users");
 
-    return ResponseEntity.ok().body(uploadedFilePath);
-  }
+        userService.updateUserAvatar(user, uploadedFilePath);
+
+        return ResponseEntity.ok().body(uploadedFilePath);
+    }
+
+    @GetMapping("/suggestion")
+    public ResponseEntity<List<SuggestionDTO>> getSuggestion(@RequestParam String query) {
+
+        List<SuggestionDTO> usersSuggestion = userService.getSuggestion(query);
+
+        return ResponseEntity.status(HttpStatus.OK).body(usersSuggestion);
+    }
+
 }
