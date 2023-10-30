@@ -15,15 +15,15 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<UserAccount, UUID> {
     Optional<UserAccount> findByEmail(String email);
 
-    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'USER' IN (roles.name)")
+    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name)")
     Page<UserAccount> findAll(Pageable pageable);
 
-    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'USER' IN (roles.name) AND user.id IN :usersIds")
+    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name) AND user.id IN :usersIds")
     Page<UserAccount> findAllByIds(List<UUID> usersIds, Pageable pageable);
 
     @Query(value = "SELECT us.* FROM users us " +
             "INNER JOIN users_roles user_role ON (user_role.user_account_id = us.id) " +
             "INNER JOIN roles role ON (role.id = user_role.roles_id)" +
-            " WHERE role.name = 'USER' AND (LOWER(us.name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(us.email) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
+            " WHERE role.name = 'COMPANY' AND (LOWER(us.name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(us.email) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
     List<UserAccount> findSuggestions(String query);
 }

@@ -6,20 +6,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.freely.backend.user.UserAccount;
 import com.freely.backend.user.UserService;
 
 @Component
 public class UserAuthenticationService implements UserDetailsService {
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    UserAccount user = userService.loadForAuthentication(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-    return user;
-  }
+        return userService.loadForAuthentication(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }

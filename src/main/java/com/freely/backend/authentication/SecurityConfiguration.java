@@ -20,42 +20,42 @@ import com.freely.backend.user.UserService;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
 public class SecurityConfiguration {
-  private TokenService tokenService;
+    private final TokenService tokenService;
 
-  private UserService userService;
+    private final UserService userService;
 
-  public SecurityConfiguration(TokenService tokenService,
-      UserService userService) {
-    this.tokenService = tokenService;
-    this.userService = userService;
-  }
+    public SecurityConfiguration(TokenService tokenService,
+                                 UserService userService) {
+        this.tokenService = tokenService;
+        this.userService = userService;
+    }
 
-  @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
-        .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
-        .anyRequest().authenticated()
-        .and().csrf()
-        .disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .addFilterBefore(new TokenAuthenticationFilter(tokenService, userService),
-            UsernamePasswordAuthenticationFilter.class);
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                .anyRequest().authenticated()
+                .and().csrf()
+                .disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .addFilterBefore(new TokenAuthenticationFilter(tokenService, userService),
+                        UsernamePasswordAuthenticationFilter.class);
 
-    http.cors();
+        http.cors();
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-      throws Exception {
-    return authenticationConfiguration.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    StrictHttpFirewall firewall = new StrictHttpFirewall();
-    firewall.setAllowUrlEncodedDoubleSlash(true);
-    return (web) -> web.httpFirewall(firewall);
-  }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        StrictHttpFirewall firewall = new StrictHttpFirewall();
+        firewall.setAllowUrlEncodedDoubleSlash(true);
+        return (web) -> web.httpFirewall(firewall);
+    }
 
 }

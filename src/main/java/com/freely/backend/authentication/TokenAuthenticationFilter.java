@@ -16,51 +16,51 @@ import com.freely.backend.user.UserService;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-  private TokenService tokenService;
+    private final TokenService tokenService;
 
-  private UserService userService;
+    private final UserService userService;
 
-  public TokenAuthenticationFilter(TokenService tokenService, UserService userService) {
-    super();
-    this.tokenService = tokenService;
-    this.userService = userService;
-  }
-
-  @Override
-  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
-
-    String tokenFromHeader = getTokenFromHeader(request);
-    boolean tokenValid = tokenService.isTokenValid(tokenFromHeader);
-
-    if (tokenValid) {
-      this.authenticate(tokenFromHeader);
+    public TokenAuthenticationFilter(TokenService tokenService, UserService userService) {
+        super();
+        this.tokenService = tokenService;
+        this.userService = userService;
     }
 
-    filterChain.doFilter(request, response);
-  }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-  private String getTokenFromHeader(HttpServletRequest request) {
-    String token = request.getHeader("Authorization");
+        String tokenFromHeader = getTokenFromHeader(request);
+        boolean tokenValid = tokenService.isTokenValid(tokenFromHeader);
 
-    if (token == null || token.isEmpty() || !token.startsWith("Bearer ")) {
-      return null;
+        if (tokenValid) {
+            this.authenticate(tokenFromHeader);
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    return token.substring(7, token.length());
-  }
+    private String getTokenFromHeader(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
 
-  private void authenticate(String tokenFromHeader) {
-    UUID id = tokenService.getTokenId(tokenFromHeader);
+        if (token == null || !token.startsWith("Bearer ")) {
+            return null;
+        }
 
-    var optionalUser = userService.loadForAuthenticationById(id);
-
-    if (optionalUser.isPresent()) {
-      var user = optionalUser.get();
-
-      var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null,
-          user.getAuthorities());
-      SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        return token.substring(7);
     }
-  }
+
+    private void authenticate(String tokenFromHeader) {
+        UUID id = tokenService.getTokenId(tokenFromHeader);
+
+        var optionalUser = userService.loadForAuthenticationById(id);
+
+        if (optionalUser.isPresent()) {
+            var user = optionalUser.get();
+
+            var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null,
+                    user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        }
+    }
 }

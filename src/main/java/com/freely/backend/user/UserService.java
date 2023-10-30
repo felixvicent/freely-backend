@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.freely.backend.authentication.StringHash;
 import com.freely.backend.mail.MailService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.user.dto.CreateUserForm;
@@ -35,6 +36,9 @@ public class UserService {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private StringHash stringHash;
+
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -61,7 +65,7 @@ public class UserService {
         userAccount.getRoles().add(role);
         userAccount.setActive(false);
 
-        var activeLink = frontendUrl + "/activeAccount?code=" + encoder.encode(userAccount.getEmail());
+        var activeLink = frontendUrl + "/activeAccount?code=" + stringHash.hash(userAccount.getEmail());
 
         mailService.sendMail(
                 userAccount.getEmail(),
@@ -78,6 +82,15 @@ public class UserService {
 
     public Page<UserDTO> listAllByIds(Pageable pageable, List<UUID> usersIds) {
         return userRepository.findAllByIds(usersIds, pageable).map(this::entityToDTO);
+    }
+
+    public UserAccount findByEmail(String email) {
+        var user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não encontrado");
+        }
+
+        return user.get();
     }
 
     @Transactional
@@ -133,6 +146,15 @@ public class UserService {
         var role = new Role(Role.ADMIN_ROLE_ID);
 
         user.getRoles().add(role);
+        user.setActive(true);
+
+        userRepository.save(user);
+    }
+
+    public void activeAccount(String email, String password) {
+        var user = findByEmail(email);
+
+        user.setPassword(encoder.encode(password));
         user.setActive(true);
 
         userRepository.save(user);

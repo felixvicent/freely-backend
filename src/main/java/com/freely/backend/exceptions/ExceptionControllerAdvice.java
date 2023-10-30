@@ -13,42 +13,42 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class ExceptionControllerAdvice {
 
-  @ResponseBody
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<MessageExceptionHandler> resourceNotFound(ResourceNotFoundException resourceNotFoundException) {
-    MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),
-        resourceNotFoundException.getMessage());
+    @ResponseBody
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<MessageExceptionHandler> resourceNotFound(ResourceNotFoundException resourceNotFoundException) {
+        MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.NOT_FOUND.value(),
+                resourceNotFoundException.getMessage());
 
-    return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.NOT_FOUND);
-  }
+        return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.NOT_FOUND);
+    }
 
-  @ResponseBody
-  @ExceptionHandler(NoHasPermissionException.class)
-  public ResponseEntity<MessageExceptionHandler> noHasPermission(NoHasPermissionException noHasPermissionException) {
-    MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(),
-        noHasPermissionException.getMessage());
+    @ResponseBody
+    @ExceptionHandler({NoHasPermissionException.class, UnauthorizedException.class})
+    public ResponseEntity<MessageExceptionHandler> noHasPermission(NoHasPermissionException noHasPermissionException) {
+        MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.FORBIDDEN.value(),
+                noHasPermissionException.getMessage());
 
-    return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.FORBIDDEN);
-  }
+        return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.FORBIDDEN);
+    }
 
-  @ResponseBody
-  @ExceptionHandler(ResourceAlreadyExistsException.class)
-  public ResponseEntity<MessageExceptionHandler> resourceAlreadyExists(
-      ResourceAlreadyExistsException resourceAlreadyExistsException) {
-    MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.CONFLICT.value(),
-        resourceAlreadyExistsException.getMessage());
+    @ResponseBody
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<MessageExceptionHandler> resourceAlreadyExists(
+            ResourceAlreadyExistsException resourceAlreadyExistsException) {
+        MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.CONFLICT.value(),
+                resourceAlreadyExistsException.getMessage());
 
-    return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.CONFLICT);
-  }
+        return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.CONFLICT);
+    }
 
-  @ResponseBody
-  @ExceptionHandler({ MethodArgumentTypeMismatchException.class, MethodArgumentNotValidException.class,
-      BadRequestException.class })
-  public ResponseEntity<MessageExceptionHandler> methodArgumentNotValid(
-      Exception exception) {
-    MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.BAD_REQUEST.value(),
-        exception.getMessage());
+    @ResponseBody
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, MethodArgumentNotValidException.class,
+            BadRequestException.class})
+    public ResponseEntity<MessageExceptionHandler> methodArgumentNotValid(
+            Exception exception) {
+        MessageExceptionHandler error = new MessageExceptionHandler(new Date(), HttpStatus.BAD_REQUEST.value(),
+                exception.getMessage());
 
-    return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.BAD_REQUEST);
-  }
+        return new ResponseEntity<MessageExceptionHandler>(error, HttpStatus.BAD_REQUEST);
+    }
 }
