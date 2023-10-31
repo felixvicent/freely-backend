@@ -164,6 +164,20 @@ public class UserService {
         return userRepository.findSuggestions(query).stream().map(user -> SuggestionDTO.builder().label(user.getName()).value(user.getId()).build()).toList();
     }
 
+    public UserDTO toggleActive(UUID userId) {
+        Optional<UserAccount> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
+
+        user.get().setActive(!user.get().isActive());
+
+        var updatedUser = userRepository.save(user.get());
+
+        return entityToDTO(updatedUser);
+    }
+
     private UserDTO entityToDTO(UserAccount user) {
         return UserDTO.builder()
                 .id(user.getId())

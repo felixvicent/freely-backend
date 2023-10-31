@@ -84,4 +84,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(usersSuggestion);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{userId}/toggleActive")
+    public ResponseEntity<?> toggleActive(@PathVariable UUID userId) {
+        return ResponseEntity.ok(userService.toggleActive(userId));
+    }
+
 }
