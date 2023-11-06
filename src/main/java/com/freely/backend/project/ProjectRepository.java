@@ -1,5 +1,6 @@
 package com.freely.backend.project;
 
+import com.freely.backend.client.Client;
 import com.freely.backend.user.UserAccount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,8 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     @Query(value = "SELECT project.* FROM projects project WHERE project.user_id = :userId ORDER BY project.created_at DESC LIMIT 5", nativeQuery = true)
     List<Project> findLatest(UUID userId);
+
+    void deleteByClient(Client client);
+
+    List<Project> findByClient(Client client);
 }

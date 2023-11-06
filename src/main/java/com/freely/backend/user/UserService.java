@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import com.freely.backend.authentication.StringHash;
+import com.freely.backend.client.ClientService;
 import com.freely.backend.mail.MailService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.user.dto.CreateUserForm;
@@ -26,6 +28,9 @@ import com.freely.backend.web.user.dto.UserDTO;
 
 @Service
 public class UserService {
+
+    @Autowired
+    private ClientService clientService;
 
     @Autowired
     private UserRepository userRepository;
@@ -54,6 +59,12 @@ public class UserService {
     public UserDTO createUser(CreateUserForm form) {
         if (this.loadForAuthentication(form.getEmail()).isPresent()) {
             throw new ResourceAlreadyExistsException("Usuário já existe");
+        }
+
+        Optional<UserAccount> userWithDocument = userRepository.findByDocument(form.getDocument());
+
+        if (userWithDocument.isPresent()) {
+            throw new ResourceAlreadyExistsException("Documento já cadastrado");
         }
 
         var userAccount = new UserAccount();
@@ -94,24 +105,42 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateUser(UserAccount user, UpdateUserForm form) {
-        Optional<UserAccount> userToUpdate = userRepository.findById(user.getId());
+    public UserDTO updateUser(@Valid UpdateUserForm form, UUID userId) {
+        Optional<UserAccount> userToUpdate = userRepository.findById(userId);
 
         if (userToUpdate.isEmpty()) {
             throw new ResourceNotFoundException("Usuário não existe");
         }
 
+        Optional<UserAccount> userWithDocument = userRepository.findByDocument(form.getDocument());
+
+        if (userWithDocument.isPresent() && userWithDocument.get().getId() != userId) {
+            throw new ResourceAlreadyExistsException("Documento já cadastrado");
+        }
+
         var userAccount = new UserAccount();
 
         BeanUtils.copyProperties(form, userAccount);
-        userAccount.setId(user.getId());
+        userAccount.setId(userId);
 
-        var role = new Role(form.getRole().getId());
-
-        userAccount.getRoles().add(role);
+        userAccount.getRoles().addAll(userToUpdate.get().getRoles());
+        userAccount.setActive(userToUpdate.get().isActive());
         userAccount.setPassword(userToUpdate.get().getPassword());
 
         return entityToDTO(userRepository.save(userAccount));
+    }
+
+    @Transactional
+    public void delete(UUID userId) {
+        Optional<UserAccount> userToDelete = userRepository.findById(userId);
+
+        if (userToDelete.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
+
+        clientService.deleteByUser(userToDelete.get());
+
+        userRepository.delete(userToDelete.get());
     }
 
     public void updateUserAvatar(UserAccount user, String avatarUrl) {
@@ -183,6 +212,8 @@ public class UserService {
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .document(user.getDocument())
+                .telephone(user.getTelephone())
                 .active(user.isActive())
                 .role(user.getRoles().iterator().next().getName())
                 .createdAt(user.getCreatedAt())

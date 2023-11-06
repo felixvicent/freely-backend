@@ -53,6 +53,8 @@ public class UserAccount implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    private String telephone;
+
     private boolean active;
 
     private String avatar;

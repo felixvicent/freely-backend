@@ -80,6 +80,11 @@ public class ActivityService {
         activityRepository.delete(activity.get());
     }
 
+    public void deleteByProject(Project project) {
+        activityRepository.deleteByProject(project);
+    }
+
+
     private ActivityDTO entityToDTO(Activity activity) {
         return ActivityDTO.builder()
                 .id(activity.getId())

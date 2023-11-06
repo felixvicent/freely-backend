@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
+import com.freely.backend.project.ProjectService;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.project.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
@@ -20,10 +21,15 @@ import com.freely.backend.web.clients.dto.AddressDTO;
 import com.freely.backend.web.clients.dto.ClientListDTO;
 import com.freely.backend.web.clients.dto.ClientForm;
 
+import javax.transaction.Transactional;
+
 @Service
 public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private ProjectService projectService;
 
     public Page<ClientListDTO> findAll(UserAccount user, String query, Pageable pageable) {
         return clientRepository.findByUser(user, query, pageable).map(this::entityToListDTO);
@@ -102,6 +108,17 @@ public class ClientService {
 
     public long countByUser(UserAccount user) {
         return clientRepository.countByUser(user);
+    }
+
+    @Transactional
+    public void deleteByUser(UserAccount user) {
+        var clients = clientRepository.findByUser(user);
+
+        clients.forEach(client -> {
+            projectService.deleteByClient(client);
+        });
+
+        clientRepository.deleteByUser(user);
     }
 
 

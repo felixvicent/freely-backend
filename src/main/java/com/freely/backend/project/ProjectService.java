@@ -1,5 +1,6 @@
 package com.freely.backend.project;
 
+import com.freely.backend.activity.ActivityService;
 import com.freely.backend.client.Client;
 import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
@@ -29,6 +30,9 @@ public class ProjectService {
     @Autowired
     private ActivityRepository activityRepository;
 
+    @Autowired
+    private ActivityService activityService;
+
     public Page<ProjectDTO> findAll(UserAccount user, Pageable pageable) {
         return projectRepository.findByUser(user, pageable).map(this::entityToDTO);
     }
@@ -49,6 +53,17 @@ public class ProjectService {
 
     public long countByUser(UserAccount user) {
         return projectRepository.countByUser(user);
+    }
+
+    @Transactional
+    public void deleteByClient(Client client) {
+        var projects = projectRepository.findByClient(client);
+
+        projects.forEach(project -> {
+            activityService.deleteByProject(project);
+        });
+
+        projectRepository.deleteByClient(client);
     }
 
 

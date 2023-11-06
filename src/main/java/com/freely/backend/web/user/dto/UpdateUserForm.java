@@ -11,16 +11,16 @@ import lombok.Data;
 
 @Data
 public class UpdateUserForm {
-  @NotBlank
-  @Email
-  private String email;
+    @NotBlank
+    @Email
+    private String email;
 
-  @NotBlank
-  @Size(min = 3, max = 50)
-  private String name;
+    @NotBlank
+    @Size(min = 3, max = 50)
+    private String name;
 
-  @NotNull
-  private boolean active;
+    @NotBlank
+    private String document;
 
-  private Role role;
+    private String telephone;
 }

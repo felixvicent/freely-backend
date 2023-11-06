@@ -21,8 +21,6 @@ public class CreateUserForm {
     @NotBlank
     private String document;
 
-    @NotNull
-    private boolean active;
+    private String telephone;
 
-    private Role role;
 }

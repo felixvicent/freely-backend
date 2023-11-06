@@ -30,4 +30,8 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
     List<Client> findLatest(UUID userId);
 
+    void deleteByUser(UserAccount user);
+
+    List<Client> findByUser(UserAccount user);
+
 }

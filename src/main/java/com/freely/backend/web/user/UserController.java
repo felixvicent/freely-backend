@@ -57,12 +57,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(createUserForm));
     }
 
-    @PutMapping
-    public ResponseEntity<Object> update(@AuthenticationPrincipal UserAccount user,
-                                         @RequestBody @Valid UpdateUserForm form) {
-        UserDTO updatedUser = userService.updateUser(user, form);
+    @PutMapping("/{userId}")
+    public ResponseEntity<Object> update(@RequestBody @Valid UpdateUserForm form,
+                                         @PathVariable UUID userId) {
+        UserDTO updatedUser = userService.updateUser(form, userId);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<?> delete(@PathVariable UUID userId) {
+        userService.delete(userId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/avatar")

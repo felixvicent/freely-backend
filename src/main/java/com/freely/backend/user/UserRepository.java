@@ -26,4 +26,6 @@ public interface UserRepository extends JpaRepository<UserAccount, UUID> {
             "INNER JOIN roles role ON (role.id = user_role.roles_id)" +
             " WHERE role.name = 'COMPANY' AND (LOWER(us.name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(us.email) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
     List<UserAccount> findSuggestions(String query);
+
+    Optional<UserAccount> findByDocument(String document);
 }
