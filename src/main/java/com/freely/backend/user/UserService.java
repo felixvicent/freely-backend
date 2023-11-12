@@ -87,12 +87,12 @@ public class UserService {
         return entityToDTO(userRepository.save(userAccount));
     }
 
-    public Page<UserDTO> listAll(Pageable pageable) {
-        return userRepository.findAll(pageable).map(this::entityToDTO);
+    public Page<UserDTO> listAll(List<Boolean> status, Pageable pageable) {
+        return userRepository.findAll(status, pageable).map(this::entityToDTO);
     }
 
-    public Page<UserDTO> listAllByIds(Pageable pageable, List<UUID> usersIds) {
-        return userRepository.findAllByIds(usersIds, pageable).map(this::entityToDTO);
+    public Page<UserDTO> listAllByIds(List<UUID> usersIds, List<Boolean> status, Pageable pageable) {
+        return userRepository.findAllByIds(usersIds, status, pageable).map(this::entityToDTO);
     }
 
     public UserAccount findByEmail(String email) {

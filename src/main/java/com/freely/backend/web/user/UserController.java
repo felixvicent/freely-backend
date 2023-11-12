@@ -1,6 +1,7 @@
 package com.freely.backend.web.user;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,13 +40,23 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Page<UserDTO>> list(
             @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable,
-            @RequestParam(required = false, value = "usersIds[]") List<UUID> usersIds) {
+            @RequestParam(required = false, value = "usersIds[]") List<UUID> usersIds,
+            @RequestParam(required = false, value = "status") Boolean status) {
+
+        List<Boolean> statuses = new ArrayList<>();
+
+        if (status == null) {
+            statuses.add(true);
+            statuses.add(false);
+        } else {
+            statuses.add(status);
+        }
 
         Page<UserDTO> users;
         if (usersIds == null) {
-            users = userService.listAll(pageable);
+            users = userService.listAll(statuses, pageable);
         } else {
-            users = userService.listAllByIds(pageable, usersIds);
+            users = userService.listAllByIds(usersIds, statuses, pageable);
         }
 
         return ResponseEntity.ok(users);

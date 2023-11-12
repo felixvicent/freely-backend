@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.freely.backend.client.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,11 +14,11 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<UserAccount, UUID> {
     Optional<UserAccount> findByEmail(String email);
 
-    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name)")
-    Page<UserAccount> findAll(Pageable pageable);
+    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name) AND user.active IN (:status)")
+    Page<UserAccount> findAll(List<Boolean> status, Pageable pageable);
 
-    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name) AND user.id IN :usersIds")
-    Page<UserAccount> findAllByIds(List<UUID> usersIds, Pageable pageable);
+    @Query("SELECT user FROM UserAccount user INNER JOIN user.roles roles WHERE 'COMPANY' IN (roles.name) AND user.id IN :usersIds  AND user.active IN(:status)")
+    Page<UserAccount> findAllByIds(List<UUID> usersIds, List<Boolean> status, Pageable pageable);
 
     @Query(value = "SELECT us.* FROM users us " +
             "INNER JOIN users_roles user_role ON (user_role.user_account_id = us.id) " +
