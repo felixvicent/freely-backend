@@ -138,8 +138,6 @@ public class UserService {
             throw new ResourceNotFoundException("Usuário não existe");
         }
 
-        clientService.deleteByUser(userToDelete.get());
-
         userRepository.delete(userToDelete.get());
     }
 

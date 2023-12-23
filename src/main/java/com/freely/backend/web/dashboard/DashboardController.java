@@ -31,7 +31,7 @@ public class DashboardController {
 
     @GetMapping
     public ResponseEntity<?> index(@AuthenticationPrincipal UserAccount user) {
-        long quantityOfClients = clientService.countByUser(user);
+        long quantityOfClients = clientService.countByCompany(user);
         long quantityOfProjects = projectService.countByUser(user);
         long quantityOfActivities = activityService.countByUser(user);
         List<ClientListDTO> latestClients = clientService.findLatest(user);

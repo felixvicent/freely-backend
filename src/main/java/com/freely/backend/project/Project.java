@@ -49,7 +49,7 @@ public class Project {
     private LocalDateTime updatedAt;
 
     @OrderBy("created_at")
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Activity> activities = new HashSet<>();
 
     @PrePersist

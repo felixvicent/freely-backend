@@ -31,8 +31,8 @@ public class ClientService {
     @Autowired
     private ProjectService projectService;
 
-    public Page<ClientListDTO> findAll(UserAccount user, String query, Pageable pageable) {
-        return clientRepository.findByUser(user, query, pageable).map(this::entityToListDTO);
+    public Page<ClientListDTO> findAll(UserAccount company, String query, Pageable pageable) {
+        return clientRepository.findByCompany(company, query, pageable).map(this::entityToListDTO);
     }
 
     public List<ClientListDTO> findLatest(UserAccount user) {
@@ -40,7 +40,7 @@ public class ClientService {
     }
 
     public ClientListDTO create(ClientForm form, UserAccount user) {
-        Optional<Client> client = clientRepository.findByDocumentAndUser(form.getDocument(), user);
+        Optional<Client> client = clientRepository.findByDocumentAndCompany(form.getDocument(), user);
 
         if (client.isPresent()) {
             throw new ResourceAlreadyExistsException("Já existe cliente com esse CPF/CNPJ");
@@ -52,7 +52,7 @@ public class ClientService {
         BeanUtils.copyProperties(form, newClient);
         BeanUtils.copyProperties(form.getAddress(), newAddress);
 
-        newClient.setUser(user);
+        newClient.setCompany(user);
         newClient.setAddress(newAddress);
 
         Client savedClient = clientRepository.save(newClient);
@@ -61,7 +61,7 @@ public class ClientService {
     }
 
     public ClientListDTO update(ClientForm form, UUID clientId, UserAccount user) {
-        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(clientId, user);
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -74,7 +74,7 @@ public class ClientService {
         BeanUtils.copyProperties(form.getAddress(), updatedAddress);
 
         updatedClient.setId(clientId);
-        updatedClient.setUser(user);
+        updatedClient.setCompany(user);
         updatedClient.setAddress(updatedAddress);
 
         Client savedClient = clientRepository.save(updatedClient);
@@ -83,7 +83,7 @@ public class ClientService {
     }
 
     public void delete(UUID clientId, UserAccount user) {
-        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(clientId, user);
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -97,7 +97,7 @@ public class ClientService {
     }
 
     public ClientPageDTO findById(UUID clientId, UserAccount user) {
-        Optional<Client> client = clientRepository.findByIdAndUser(clientId, user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(clientId, user);
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -106,19 +106,17 @@ public class ClientService {
         return entityToPageDTO(client.get());
     }
 
-    public long countByUser(UserAccount user) {
-        return clientRepository.countByUser(user);
+    public long countByCompany(UserAccount company) {
+        return clientRepository.countByCompany(company);
     }
 
     @Transactional
-    public void deleteByUser(UserAccount user) {
-        var clients = clientRepository.findByUser(user);
+    public void deleteByCompany(UserAccount company) {
+        var clients = clientRepository.findByCompany(company);
 
-        clients.forEach(client -> {
-            projectService.deleteByClient(client);
-        });
+        clients.forEach(client -> projectService.deleteByClient(client));
 
-        clientRepository.deleteByUser(user);
+        clientRepository.deleteByCompany(company);
     }
 
 

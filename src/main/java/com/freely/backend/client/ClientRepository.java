@@ -15,23 +15,23 @@ import com.freely.backend.user.UserAccount;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
-    @Query("SELECT client FROM Client client WHERE client.user = :user AND (LOWER(firstName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(lastName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
-    Page<Client> findByUser(UserAccount user, String query, Pageable pageable);
+    @Query("SELECT client FROM Client client WHERE client.company = :company AND (LOWER(firstName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(lastName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
+    Page<Client> findByCompany(UserAccount company, String query, Pageable pageable);
 
-    Optional<Client> findByIdAndUser(UUID id, UserAccount user);
+    Optional<Client> findByIdAndCompany(UUID id, UserAccount company);
 
-    @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId AND (LOWER(first_name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(last_name) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId AND (LOWER(first_name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(last_name) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
     List<Client> findSuggestions(String query, UUID userId);
 
-    Optional<Client> findByDocumentAndUser(String document, UserAccount user);
+    Optional<Client> findByDocumentAndCompany(String document, UserAccount company);
 
-    Long countByUser(UserAccount user);
+    Long countByCompany(UserAccount company);
 
-    @Query(value = "SELECT client.* FROM clients client WHERE client.user_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
     List<Client> findLatest(UUID userId);
 
-    void deleteByUser(UserAccount user);
+    void deleteByCompany(UserAccount company);
 
-    List<Client> findByUser(UserAccount user);
+    List<Client> findByCompany(UserAccount company);
 
 }

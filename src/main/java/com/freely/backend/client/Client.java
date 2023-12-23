@@ -42,7 +42,7 @@ public class Client {
     private String document;
 
     @OrderBy("created_at DESC")
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Project> projects = new HashSet<>();
 
@@ -59,8 +59,8 @@ public class Client {
     private Address address;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserAccount user;
+    @JoinColumn(name = "company_id", nullable = false)
+    private UserAccount company;
 
     @PrePersist
     public void setCreatedAt() {

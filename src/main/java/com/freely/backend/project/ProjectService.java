@@ -69,7 +69,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectDTO save(UserAccount user, ProjectForm form) {
-        Optional<Client> client = clientRepository.findByIdAndUser(form.getClientId(), user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user);
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -107,7 +107,7 @@ public class ProjectService {
             throw new ResourceNotFoundException("Projeto não encontrado");
         }
 
-        Optional<Client> client = clientRepository.findByIdAndUser(form.getClientId(), user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user);
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
