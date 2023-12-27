@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,4 +20,7 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company);
 
     void deleteByProject(Project project);
+
+    @Query("SELECT COUNT(activity) FROM Activity activity LEFT JOIN activity.project project WHERE project.company = :company AND DATE(activity.createdAt) BETWEEN :periodStart AND :periodEnd")
+    Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 }

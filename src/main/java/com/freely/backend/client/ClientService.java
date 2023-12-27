@@ -108,7 +108,16 @@ public class ClientService {
     }
 
     public long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
-        return clientRepository.countByCompany(company, periodStart, periodEnd);
+        LocalDate start = LocalDate.of(2000, 1, 1);
+        LocalDate end = LocalDate.of(2100, 1, 1);
+
+        if(periodStart != null) {
+            start = periodStart;
+        }
+        if(periodEnd != null) {
+            end = periodEnd;
+        }
+        return clientRepository.countByCompany(company, start, end);
     }
 
     private ClientListDTO entityToListDTO(Client client) {

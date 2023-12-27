@@ -131,8 +131,31 @@ public class ProjectService {
     }
 
     public Double getRevenue(UserAccount user, LocalDate periodStart, LocalDate periodEnd) {
-        return projectRepository.countRevenue(user, periodStart, periodEnd);
+        LocalDate start = LocalDate.of(2000, 1, 1);
+        LocalDate end = LocalDate.of(2100, 1, 1);
+
+        if(periodStart != null) {
+            start = periodStart;
+        }
+        if(periodEnd != null) {
+            end = periodEnd;
+        }
+        return projectRepository.countRevenue(user, start, end);
     }
+
+    public Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+        LocalDate start = LocalDate.of(2000, 1, 1);
+        LocalDate end = LocalDate.of(2100, 1, 1);
+
+        if(periodStart != null) {
+            start = periodStart;
+        }
+        if(periodEnd != null) {
+            end = periodEnd;
+        }
+        return projectRepository.countByCompany(company, start, end);
+    }
+
 
     private ProjectDTO entityToDTO(Project project) {
         return ProjectDTO.builder()

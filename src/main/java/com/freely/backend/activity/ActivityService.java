@@ -11,6 +11,7 @@ import com.freely.backend.web.project.dto.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,6 +76,19 @@ public class ActivityService {
 
     public void deleteByProject(Project project) {
         activityRepository.deleteByProject(project);
+    }
+
+    public Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+        LocalDate start = LocalDate.of(2000, 1, 1);
+        LocalDate end = LocalDate.of(2100, 1, 1);
+
+        if(periodStart != null) {
+            start = periodStart;
+        }
+        if(periodEnd != null) {
+            end = periodEnd;
+        }
+        return activityRepository.countByCompany(company, start, end);
     }
 
 

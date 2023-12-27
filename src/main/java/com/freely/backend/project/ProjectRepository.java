@@ -25,4 +25,7 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     @Query("SELECT SUM(p.value) FROM Project p WHERE p.company = :company AND DATE(p.createdAt) BETWEEN :periodStart AND :periodEnd")
     Double countRevenue(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
+
+    @Query("SELECT COUNT(p) FROM Project p WHERE p.company = :company AND DATE(p.createdAt) BETWEEN :periodStart AND :periodEnd")
+    Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 }

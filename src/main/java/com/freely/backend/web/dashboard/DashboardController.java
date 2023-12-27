@@ -1,5 +1,6 @@
 package com.freely.backend.web.dashboard;
 
+import com.freely.backend.activity.ActivityService;
 import com.freely.backend.client.ClientService;
 import com.freely.backend.project.ProjectService;
 import com.freely.backend.user.UserAccount;
@@ -25,10 +26,13 @@ public class DashboardController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private ActivityService activityService;
+
     @GetMapping("/revenue")
     public ResponseEntity<?> getRevenue(@AuthenticationPrincipal UserAccount userAccount,
-                                        @RequestParam("periodStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
-                                        @RequestParam("periodEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
+                                        @RequestParam(name = "periodStart", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
+                                        @RequestParam(name = "periodEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
 
         var revenue = projectService.getRevenue(userAccount, periodStart, periodEnd);
 
@@ -37,11 +41,31 @@ public class DashboardController {
 
     @GetMapping("/clients")
     public ResponseEntity<?> getClients(@AuthenticationPrincipal UserAccount userAccount,
-                                        @RequestParam("periodStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
-                                        @RequestParam("periodEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
+                                        @RequestParam(name = "periodStart", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
+                                        @RequestParam(name = "periodEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
 
-        var revenue = clientService.countByCompany(userAccount, periodStart, periodEnd);
+        var clients = clientService.countByCompany(userAccount, periodStart, periodEnd);
 
-        return ResponseEntity.ok(revenue);
+        return ResponseEntity.ok(clients);
+    }
+
+    @GetMapping("/projects")
+    public ResponseEntity<?> getProjects(@AuthenticationPrincipal UserAccount userAccount,
+                                        @RequestParam(name = "periodStart", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
+                                        @RequestParam(name = "periodEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
+
+        var projects = projectService.countByCompany(userAccount, periodStart, periodEnd);
+
+        return ResponseEntity.ok(projects);
+    }
+
+    @GetMapping("/activities")
+    public ResponseEntity<?> getActivities(@AuthenticationPrincipal UserAccount userAccount,
+                                         @RequestParam(name = "periodStart", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodStart,
+                                         @RequestParam(name = "periodEnd", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodEnd) {
+
+        var activities = activityService.countByCompany(userAccount, periodStart, periodEnd);
+
+        return ResponseEntity.ok(activities);
     }
 }
