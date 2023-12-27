@@ -1,5 +1,6 @@
 package com.freely.backend.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,13 +26,9 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
 
     Optional<Client> findByDocumentAndCompany(String document, UserAccount company);
 
-    Long countByCompany(UserAccount company);
+    @Query("SELECT COUNT(client) FROM Client client WHERE client.company = :company AND DATE(client.createdAt) BETWEEN :periodStart AND :periodEnd")
+    Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 
     @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
     List<Client> findLatest(UUID userId);
-
-    void deleteByCompany(UserAccount company);
-
-    List<Client> findByCompany(UserAccount company);
-
 }

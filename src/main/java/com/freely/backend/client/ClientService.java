@@ -1,5 +1,6 @@
 package com.freely.backend.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -106,19 +107,9 @@ public class ClientService {
         return entityToPageDTO(client.get());
     }
 
-    public long countByCompany(UserAccount company) {
-        return clientRepository.countByCompany(company);
+    public long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+        return clientRepository.countByCompany(company, periodStart, periodEnd);
     }
-
-    @Transactional
-    public void deleteByCompany(UserAccount company) {
-        var clients = clientRepository.findByCompany(company);
-
-        clients.forEach(client -> projectService.deleteByClient(client));
-
-        clientRepository.deleteByCompany(company);
-    }
-
 
     private ClientListDTO entityToListDTO(Client client) {
         return ClientListDTO.builder()
