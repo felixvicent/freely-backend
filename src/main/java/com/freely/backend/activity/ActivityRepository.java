@@ -1,6 +1,5 @@
 package com.freely.backend.activity;
 
-import com.freely.backend.client.Client;
 import com.freely.backend.project.ActivityStatusEnum;
 import com.freely.backend.project.Project;
 import com.freely.backend.user.UserAccount;
@@ -16,8 +15,8 @@ import java.util.UUID;
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
 
 
-    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.company = :company and activity.status = :status")
-    List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company);
+    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.id = :projectId AND project.company = :company and activity.status = :status")
+    List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UUID projectId, UserAccount company);
 
     void deleteByProject(Project project);
 

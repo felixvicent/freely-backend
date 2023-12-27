@@ -25,8 +25,8 @@ public class ActivityService {
     private ProjectRepository projectRepository;
 
 
-    public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UserAccount user) {
-        return activityRepository.findByStatusAndCompany(status, user).stream().map(this::entityToDTO).toList();
+    public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UUID projectId, UserAccount user) {
+        return activityRepository.findByStatusAndCompany(status, projectId, user).stream().map(this::entityToDTO).toList();
     }
 
     public ActivityDTO create(ActivityForm form, UserAccount user) {

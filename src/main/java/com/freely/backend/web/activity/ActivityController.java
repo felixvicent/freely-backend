@@ -21,8 +21,10 @@ public class ActivityController {
     private ActivityService activityService;
 
     @GetMapping
-    public ResponseEntity<List<ActivityDTO>> getByStatus(@RequestParam ActivityStatusEnum status, @AuthenticationPrincipal UserAccount user) {
-        List<ActivityDTO> activities = activityService.findByStatus(status, user);
+    public ResponseEntity<List<ActivityDTO>> getByStatus(@AuthenticationPrincipal UserAccount user,
+                                                         @RequestParam ActivityStatusEnum status,
+                                                         @RequestParam UUID projectId) {
+        List<ActivityDTO> activities = activityService.findByStatus(status, projectId, user);
 
         return ResponseEntity.ok(activities);
     }
