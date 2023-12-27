@@ -27,8 +27,8 @@ public class Project {
     private String title;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserAccount user;
+    @JoinColumn(name = "company_id", nullable = false)
+    private UserAccount company;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)

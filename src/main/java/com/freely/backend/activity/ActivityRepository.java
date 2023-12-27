@@ -14,14 +14,9 @@ import java.util.UUID;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
 
-    @Query("SELECT COUNT(*) FROM Activity activity LEFT JOIN activity.project project WHERE project.user = :user")
-    long countByUser(UserAccount user);
 
-    @Query(value = "SELECT activity.* FROM activities activity LEFT JOIN projects project ON (project.id = activity.project_id) WHERE project.user_id = :userId ORDER BY activity.created_at DESC LIMIT 5", nativeQuery = true)
-    List<Activity> findLatest(UUID userId);
-
-    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.user = :user and activity.status = :status")
-    List<Activity> findByStatusAndUser(ActivityStatusEnum status, UserAccount user);
+    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.company = :company and activity.status = :status")
+    List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company);
 
     void deleteByProject(Project project);
 }

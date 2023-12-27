@@ -23,20 +23,13 @@ public class ActivityService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    public long countByUser(UserAccount user) {
-        return activityRepository.countByUser(user);
-    }
-
-    public List<ActivityDTO> findLatest(UserAccount user) {
-        return activityRepository.findLatest(user.getId()).stream().map(this::entityToDTO).toList();
-    }
 
     public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UserAccount user) {
-        return activityRepository.findByStatusAndUser(status, user).stream().map(this::entityToDTO).toList();
+        return activityRepository.findByStatusAndCompany(status, user).stream().map(this::entityToDTO).toList();
     }
 
     public ActivityDTO create(ActivityForm form, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndUser(form.getProjectId(), user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user);
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -52,7 +45,7 @@ public class ActivityService {
     }
 
     public ActivityDTO update(ActivityForm form, UUID activityId, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndUser(form.getProjectId(), user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user);
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");

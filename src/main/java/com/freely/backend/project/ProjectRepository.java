@@ -8,22 +8,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
-    Page<Project> findByUser(UserAccount user, Pageable pageable);
+    Page<Project> findByCompany(UserAccount company, Pageable pageable);
 
-    Optional<Project> findByIdAndUser(UUID id, UserAccount user);
-
-    Long countByUser(UserAccount user);
-
-    @Query(value = "SELECT project.* FROM projects project WHERE project.user_id = :userId ORDER BY project.created_at DESC LIMIT 5", nativeQuery = true)
-    List<Project> findLatest(UUID userId);
+    Optional<Project> findByIdAndCompany(UUID id, UserAccount company);
 
     void deleteByClient(Client client);
 
     List<Project> findByClient(Client client);
+
+    @Query("SELECT SUM(p.value) FROM Project p WHERE p.company = :company AND DATE(p.createdAt) BETWEEN :periodStart AND :periodEnd")
+    Double countRevenue(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 }

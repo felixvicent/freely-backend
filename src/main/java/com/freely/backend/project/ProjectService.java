@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -34,11 +35,11 @@ public class ProjectService {
     private ActivityService activityService;
 
     public Page<ProjectDTO> findAll(UserAccount user, Pageable pageable) {
-        return projectRepository.findByUser(user, pageable).map(this::entityToDTO);
+        return projectRepository.findByCompany(user, pageable).map(this::entityToDTO);
     }
 
     public ProjectDTO findById(UUID projectId, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndUser(projectId, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user);
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não existe");
@@ -47,21 +48,11 @@ public class ProjectService {
         return entityToDTO(project.get());
     }
 
-    public List<ProjectDTO> findLatest(UserAccount user) {
-        return projectRepository.findLatest(user.getId()).stream().map(this::entityToDTO).toList();
-    }
-
-    public long countByUser(UserAccount user) {
-        return projectRepository.countByUser(user);
-    }
-
     @Transactional
     public void deleteByClient(Client client) {
         var projects = projectRepository.findByClient(client);
 
-        projects.forEach(project -> {
-            activityService.deleteByProject(project);
-        });
+        projects.forEach(project -> activityService.deleteByProject(project));
 
         projectRepository.deleteByClient(client);
     }
@@ -81,7 +72,7 @@ public class ProjectService {
         newProject.setValue(form.getValue());
         newProject.setEstimatedDate(form.getEstimatedDate());
         newProject.setClient(client.get());
-        newProject.setUser(user);
+        newProject.setCompany(user);
 
         projectRepository.save(newProject);
 
@@ -101,7 +92,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectDTO update(UserAccount user, ProjectForm form, UUID id) {
-        Optional<Project> project = projectRepository.findByIdAndUser(id, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(id, user);
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -127,7 +118,7 @@ public class ProjectService {
     }
 
     public void delete(UserAccount user, UUID id) {
-        Optional<Project> project = projectRepository.findByIdAndUser(id, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(id, user);
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -137,6 +128,10 @@ public class ProjectService {
 
 
         projectRepository.delete(project.get());
+    }
+
+    public Double getRevenue(UserAccount user, LocalDate periodStart, LocalDate periodEnd) {
+        return projectRepository.countRevenue(user, periodStart, periodEnd);
     }
 
     private ProjectDTO entityToDTO(Project project) {
