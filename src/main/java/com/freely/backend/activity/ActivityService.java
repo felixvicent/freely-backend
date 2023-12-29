@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class ActivityService {
         Activity activity = new Activity();
 
         activity.setTitle(form.getTitle());
+        activity.setEstimatedDate(form.getEstimatedDate());
         activity.setStatus(ActivityStatusEnum.PENDING);
         activity.setProject(project.get());
 
@@ -61,6 +63,10 @@ public class ActivityService {
         activity.get().setTitle(form.getTitle());
         activity.get().setStatus(form.getStatus());
 
+        if(form.getStatus() == ActivityStatusEnum.DONE) {
+            activity.get().setFinishedAt(LocalDateTime.now());
+        }
+
         return entityToDTO(activityRepository.save(activity.get()));
     }
 
@@ -72,10 +78,6 @@ public class ActivityService {
         }
 
         activityRepository.delete(activity.get());
-    }
-
-    public void deleteByProject(Project project) {
-        activityRepository.deleteByProject(project);
     }
 
     public Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
@@ -98,6 +100,8 @@ public class ActivityService {
                 .title(activity.getTitle())
                 .status(activity.getStatus())
                 .createdAt(activity.getCreatedAt())
+                .estimatedDate(activity.getEstimatedDate())
+                .finishedAt(activity.getFinishedAt())
                 .project(ProjectDTO.builder()
                         .id(activity.getProject().getId())
                         .value(activity.getProject().getValue())

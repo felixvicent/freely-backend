@@ -15,4 +15,6 @@ public class ActivityDTO {
     private ActivityStatusEnum status;
     private ProjectDTO project;
     private LocalDateTime createdAt;
+    private LocalDateTime estimatedDate;
+    private LocalDateTime finishedAt;
 }

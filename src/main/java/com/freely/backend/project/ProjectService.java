@@ -1,6 +1,5 @@
 package com.freely.backend.project;
 
-import com.freely.backend.activity.ActivityService;
 import com.freely.backend.client.Client;
 import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
@@ -31,9 +30,6 @@ public class ProjectService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    @Autowired
-    private ActivityService activityService;
-
     public Page<ProjectDTO> findAll(UserAccount user, Pageable pageable) {
         return projectRepository.findByCompany(user, pageable).map(this::entityToDTO);
     }
@@ -47,16 +43,6 @@ public class ProjectService {
 
         return entityToDTO(project.get());
     }
-
-    @Transactional
-    public void deleteByClient(Client client) {
-        var projects = projectRepository.findByClient(client);
-
-        projects.forEach(project -> activityService.deleteByProject(project));
-
-        projectRepository.deleteByClient(client);
-    }
-
 
     @Transactional
     public ProjectDTO save(UserAccount user, ProjectForm form) {
@@ -79,6 +65,7 @@ public class ProjectService {
         form.getActivities().forEach(activityForm -> {
             Activity activity = new Activity();
             activity.setTitle(activityForm.getTitle());
+            activity.setEstimatedDate(activityForm.getEstimatedDate());
             activity.setStatus(ActivityStatusEnum.PENDING);
             activity.setProject(newProject);
 

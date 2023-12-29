@@ -30,6 +30,11 @@ public class Activity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ActivityStatusEnum status;
+    
+    @Column(nullable = false)
+    private LocalDateTime estimatedDate;
+
+    private LocalDateTime finishedAt;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
