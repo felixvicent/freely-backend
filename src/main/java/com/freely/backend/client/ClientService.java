@@ -8,7 +8,7 @@ import java.util.UUID;
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import com.freely.backend.project.ProjectService;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
-import com.freely.backend.web.project.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,6 @@ import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.clients.dto.AddressDTO;
 import com.freely.backend.web.clients.dto.ClientListDTO;
 import com.freely.backend.web.clients.dto.ClientForm;
-
-import javax.transaction.Transactional;
 
 @Service
 public class ClientService {

@@ -1,5 +1,7 @@
 package com.freely.backend.web.project.dto;
 
+import com.freely.backend.project.ProjectStatusEnum;
+import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.clients.dto.ClientListDTO;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +20,5 @@ public class ProjectDTO {
     private LocalDateTime estimatedDate;
     private LocalDateTime createdAt;
     private List<ActivityDTO> activities;
+    private ProjectStatusEnum status;
 }

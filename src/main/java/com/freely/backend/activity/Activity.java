@@ -1,6 +1,5 @@
 package com.freely.backend.activity;
 
-import com.freely.backend.project.ActivityStatusEnum;
 import com.freely.backend.project.Project;
 import lombok.Getter;
 import lombok.Setter;

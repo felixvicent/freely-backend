@@ -1,8 +1,8 @@
 package com.freely.backend.project;
 
-public enum ActivityStatusEnum {
+public enum ProjectStatusEnum {
     PENDING,
     PROGRESS,
-    WAITING,
-    DONE
+    DONE,
+    WAITING_PAYMENT
 }

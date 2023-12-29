@@ -1,5 +1,6 @@
 package com.freely.backend.project;
 
+import com.freely.backend.activity.ActivityStatusEnum;
 import com.freely.backend.client.Client;
 import com.freely.backend.client.ClientRepository;
 import com.freely.backend.exceptions.ResourceNotFoundException;
@@ -7,9 +8,10 @@ import com.freely.backend.activity.Activity;
 import com.freely.backend.activity.ActivityRepository;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.clients.dto.ClientListDTO;
-import com.freely.backend.web.project.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.project.dto.ProjectForm;
+import com.freely.backend.web.project.dto.ProjectStatusForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -143,6 +145,19 @@ public class ProjectService {
         return projectRepository.countByCompany(company, start, end);
     }
 
+    public ProjectDTO updateStatus(UserAccount user, ProjectStatusForm form, UUID projectId) {
+        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user);
+
+        if (project.isEmpty()) {
+            throw new ResourceNotFoundException("Projeto não encontrado");
+        }
+
+        project.get().setStatus(form.getStatus());
+
+        return entityToDTO(projectRepository.save(project.get()));
+    }
+
+
 
     private ProjectDTO entityToDTO(Project project) {
         return ProjectDTO.builder()
@@ -151,6 +166,7 @@ public class ProjectService {
                 .value(project.getValue())
                 .estimatedDate(project.getEstimatedDate())
                 .createdAt(project.getCreatedAt())
+                .status(project.getStatus())
                 .client(ClientListDTO.builder()
                         .id(project.getClient().getId())
                         .email(project.getClient().getEmail())

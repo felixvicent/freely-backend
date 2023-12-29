@@ -52,6 +52,10 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Activity> activities = new HashSet<>();
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ProjectStatusEnum status = ProjectStatusEnum.PENDING;
+
     @PrePersist
     public void setCreatedAt() {
         createdAt = LocalDateTime.now();

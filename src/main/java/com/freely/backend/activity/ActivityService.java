@@ -1,12 +1,12 @@
 package com.freely.backend.activity;
 
 import com.freely.backend.exceptions.ResourceNotFoundException;
-import com.freely.backend.project.ActivityStatusEnum;
 import com.freely.backend.project.Project;
 import com.freely.backend.project.ProjectRepository;
+import com.freely.backend.project.ProjectStatusEnum;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
-import com.freely.backend.web.project.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,12 +60,19 @@ public class ActivityService {
             throw new ResourceNotFoundException("Atividade não encontrada");
         }
 
+        if(activity.get().getStatus() != form.getStatus()) {
+            project.get().setStatus(ProjectStatusEnum.PROGRESS);
+
+            projectRepository.save(project.get());
+        }
+
         activity.get().setTitle(form.getTitle());
         activity.get().setStatus(form.getStatus());
 
         if(form.getStatus() == ActivityStatusEnum.DONE) {
             activity.get().setFinishedAt(LocalDateTime.now());
         }
+
 
         return entityToDTO(activityRepository.save(activity.get()));
     }

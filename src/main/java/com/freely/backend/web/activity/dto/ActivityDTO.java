@@ -1,6 +1,7 @@
-package com.freely.backend.web.project.dto;
+package com.freely.backend.web.activity.dto;
 
-import com.freely.backend.project.ActivityStatusEnum;
+import com.freely.backend.activity.ActivityStatusEnum;
+import com.freely.backend.web.project.dto.ProjectDTO;
 import lombok.Builder;
 import lombok.Data;
 

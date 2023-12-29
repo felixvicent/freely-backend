@@ -1,10 +1,10 @@
 package com.freely.backend.web.activity;
 
 import com.freely.backend.activity.ActivityService;
-import com.freely.backend.project.ActivityStatusEnum;
+import com.freely.backend.activity.ActivityStatusEnum;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
-import com.freely.backend.web.project.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.ActivityDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

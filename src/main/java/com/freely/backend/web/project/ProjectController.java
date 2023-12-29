@@ -1,9 +1,11 @@
 package com.freely.backend.web.project;
 
 import com.freely.backend.project.ProjectService;
+import com.freely.backend.project.ProjectStatusEnum;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.project.dto.ProjectForm;
+import com.freely.backend.web.project.dto.ProjectStatusForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +54,13 @@ public class ProjectController {
             @PathVariable UUID id) {
 
         return ResponseEntity.ok(projectService.update(user, form, id));
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ProjectDTO> updateStatus(@AuthenticationPrincipal UserAccount user,
+                                                   @RequestBody ProjectStatusForm form,
+                                                   @PathVariable UUID id) {
+        return ResponseEntity.ok(projectService.updateStatus(user, form, id));
     }
 
     @DeleteMapping("/{id}")
