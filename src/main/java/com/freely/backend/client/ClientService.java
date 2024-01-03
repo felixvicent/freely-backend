@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import com.freely.backend.project.ProjectService;
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
@@ -91,8 +92,8 @@ public class ClientService {
         clientRepository.delete(client.get());
     }
 
-    public List<ClientListDTO> getSuggestion(String query, UserAccount user) {
-        return clientRepository.findSuggestions(query, user.getId()).stream().map(this::entityToListDTO).toList();
+    public List<SuggestionDTO> getSuggestion(String query, UserAccount user) {
+        return clientRepository.findSuggestions(query, user.getId()).stream().map(client -> SuggestionDTO.builder().label(client.getName()).value(client.getId()).build()).toList();
     }
 
     public ClientPageDTO findById(UUID clientId, UserAccount user) {
@@ -121,8 +122,7 @@ public class ClientService {
     private ClientListDTO entityToListDTO(Client client) {
         return ClientListDTO.builder()
                 .id(client.getId())
-                .firstName(client.getFirstName())
-                .lastName(client.getLastName())
+                .name(client.getName())
                 .telephone(client.getTelephone())
                 .email(client.getEmail())
                 .quantityOfProjects(client.getProjects().size())
@@ -132,8 +132,7 @@ public class ClientService {
     private ClientPageDTO entityToPageDTO(Client client) {
         return ClientPageDTO.builder()
                 .id(client.getId())
-                .firstName(client.getFirstName())
-                .lastName(client.getLastName())
+                .name(client.getName())
                 .telephone(client.getTelephone())
                 .email(client.getEmail())
                 .document(client.getDocument())

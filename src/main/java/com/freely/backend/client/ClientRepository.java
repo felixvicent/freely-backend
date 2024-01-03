@@ -16,7 +16,7 @@ import com.freely.backend.user.UserAccount;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
-    @Query("SELECT client FROM Client client WHERE client.company = :company AND (LOWER(firstName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(lastName) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
+    @Query("SELECT client FROM Client client WHERE client.company = :company AND (LOWER(name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
     Page<Client> findByCompany(UserAccount company, String query, Pageable pageable);
 
     Optional<Client> findByIdAndCompany(UUID id, UserAccount company);

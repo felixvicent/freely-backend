@@ -10,15 +10,9 @@ import lombok.Data;
 @Builder
 public class ClientListDTO {
     private UUID id;
-
-    private String firstName;
-
-    private String lastName;
-
+    private String name;
     private String telephone;
-
     private String email;
-
     private long quantityOfProjects;
 
 }

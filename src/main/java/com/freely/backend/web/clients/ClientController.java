@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +38,7 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<Page<ClientListDTO>> index(
-            @PageableDefault(sort = "firstName", direction = Sort.Direction.ASC) Pageable pageable,
+            @PageableDefault(sort = "name", direction = Sort.Direction.ASC) Pageable pageable,
             @RequestParam(defaultValue = "") String query,
             @AuthenticationPrincipal UserAccount user) {
 
@@ -79,7 +80,7 @@ public class ClientController {
     }
 
     @GetMapping("/suggestion")
-    public ResponseEntity<List<ClientListDTO>> getSuggestion(
+    public ResponseEntity<List<SuggestionDTO>> getSuggestion(
             @AuthenticationPrincipal UserAccount user,
             @RequestParam String query,
             @RequestParam(required = false) UUID selectedClientId) {
@@ -87,11 +88,11 @@ public class ClientController {
         if (selectedClientId != null) {
             ClientPageDTO client = clientService.findById(selectedClientId, user);
 
-            List<ClientListDTO> clients = clientService.getSuggestion(client.getFirstName(), user);
+            List<SuggestionDTO> clients = clientService.getSuggestion(client.getName(), user);
 
             return ResponseEntity.status(HttpStatus.OK).body(clients);
         }
-        List<ClientListDTO> clients = clientService.getSuggestion(query, user);
+        List<SuggestionDTO> clients = clientService.getSuggestion(query, user);
 
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }

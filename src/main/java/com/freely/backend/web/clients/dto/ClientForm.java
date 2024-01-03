@@ -9,9 +9,7 @@ import lombok.Data;
 @Data
 public class ClientForm {
     @NotBlank
-    private String firstName;
-
-    private String lastName;
+    private String name;
 
     @NotBlank
     private String telephone;

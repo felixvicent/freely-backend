@@ -11,8 +11,7 @@ import java.util.UUID;
 @Builder
 public class ClientPageDTO {
     private UUID id;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String document;
     private String email;
     private String telephone;

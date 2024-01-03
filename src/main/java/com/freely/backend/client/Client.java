@@ -26,11 +26,8 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String telephone;
