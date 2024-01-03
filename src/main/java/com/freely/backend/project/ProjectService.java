@@ -32,8 +32,10 @@ public class ProjectService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public Page<ProjectDTO> findAll(UserAccount user, Pageable pageable) {
-        return projectRepository.findByCompany(user, pageable).map(this::entityToDTO);
+    public Page<ProjectDTO> findAll(UserAccount user, List<UUID> clientIds, Pageable pageable) {
+        boolean filterByClientId = clientIds != null;
+
+        return projectRepository.findByCompany(user, clientIds, filterByClientId, pageable).map(this::entityToDTO);
     }
 
     public ProjectDTO findById(UUID projectId, UserAccount user) {

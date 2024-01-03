@@ -16,12 +16,12 @@ import com.freely.backend.user.UserAccount;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client, UUID> {
-    @Query("SELECT client FROM Client client WHERE client.company = :company AND (LOWER(name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(email) LIKE LOWER(CONCAT('%',:query,'%')))")
-    Page<Client> findByCompany(UserAccount company, String query, Pageable pageable);
+    @Query("SELECT client FROM Client client WHERE client.company = :company AND (client.id IN :clientIds OR :filterById = false)")
+    Page<Client> findByCompany(UserAccount company, List<UUID> clientIds, boolean filterById, Pageable pageable);
 
     Optional<Client> findByIdAndCompany(UUID id, UserAccount company);
 
-    @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId AND (LOWER(first_name) LIKE LOWER(CONCAT('%',:query,'%')) OR LOWER(last_name) LIKE LOWER(CONCAT('%',:query,'%'))) LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId AND LOWER(name) LIKE LOWER(CONCAT('%',:query,'%')) LIMIT 5", nativeQuery = true)
     List<Client> findSuggestions(String query, UUID userId);
 
     Optional<Client> findByDocumentAndCompany(String document, UserAccount company);
@@ -29,6 +29,4 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     @Query("SELECT COUNT(client) FROM Client client WHERE client.company = :company AND DATE(client.createdAt) BETWEEN :periodStart AND :periodEnd")
     Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 
-    @Query(value = "SELECT client.* FROM clients client WHERE client.company_id = :userId ORDER BY client.created_at DESC LIMIT 5", nativeQuery = true)
-    List<Client> findLatest(UUID userId);
 }

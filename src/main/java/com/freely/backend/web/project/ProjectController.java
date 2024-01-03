@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,9 +27,10 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<Page<ProjectDTO>> index(@PageableDefault(sort = "title", direction = Sort.Direction.DESC) Pageable pageable,
+                                                  @RequestParam(required = false, value = "clientIds[]") List<UUID> clientIds,
                                                   @AuthenticationPrincipal UserAccount user) {
 
-        Page<ProjectDTO> projects = projectService.findAll(user, pageable);
+        Page<ProjectDTO> projects = projectService.findAll(user, clientIds, pageable);
 
         return ResponseEntity.ok(projects);
 

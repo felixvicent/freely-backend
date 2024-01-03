@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
-import com.freely.backend.project.ProjectService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.activity.dto.ActivityDTO;
@@ -28,16 +27,13 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired
-    private ProjectService projectService;
 
-    public Page<ClientListDTO> findAll(UserAccount company, String query, Pageable pageable) {
-        return clientRepository.findByCompany(company, query, pageable).map(this::entityToListDTO);
+    public Page<ClientListDTO> findAll(UserAccount company, List<UUID> clientIds, Pageable pageable) {
+        boolean filterById = clientIds != null;
+
+        return clientRepository.findByCompany(company, clientIds, filterById, pageable).map(this::entityToListDTO);
     }
 
-    public List<ClientListDTO> findLatest(UserAccount user) {
-        return clientRepository.findLatest(user.getId()).stream().map(this::entityToListDTO).toList();
-    }
 
     public ClientListDTO create(ClientForm form, UserAccount user) {
         Optional<Client> client = clientRepository.findByDocumentAndCompany(form.getDocument(), user);
