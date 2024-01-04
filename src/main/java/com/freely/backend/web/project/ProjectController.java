@@ -28,9 +28,10 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<Page<ProjectDTO>> index(@PageableDefault(sort = "title", direction = Sort.Direction.DESC) Pageable pageable,
                                                   @RequestParam(required = false, value = "clientIds[]") List<UUID> clientIds,
+                                                  @RequestParam(required = false, value = "status[]") List<ProjectStatusEnum> status,
                                                   @AuthenticationPrincipal UserAccount user) {
 
-        Page<ProjectDTO> projects = projectService.findAll(user, clientIds, pageable);
+        Page<ProjectDTO> projects = projectService.findAll(user, clientIds, status, pageable);
 
         return ResponseEntity.ok(projects);
 

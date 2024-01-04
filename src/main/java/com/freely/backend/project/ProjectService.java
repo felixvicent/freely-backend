@@ -32,10 +32,18 @@ public class ProjectService {
     @Autowired
     private ActivityRepository activityRepository;
 
-    public Page<ProjectDTO> findAll(UserAccount user, List<UUID> clientIds, Pageable pageable) {
+    public Page<ProjectDTO> findAll(UserAccount user, List<UUID> clientIds, List<ProjectStatusEnum> status, Pageable pageable) {
         boolean filterByClientId = clientIds != null;
 
-        return projectRepository.findByCompany(user, clientIds, filterByClientId, pageable).map(this::entityToDTO);
+        List<ProjectStatusEnum> statusList = new ArrayList<>();
+
+        if(status != null && !status.isEmpty()) {
+            statusList.addAll(status);
+        } else {
+            statusList.addAll(Arrays.stream(ProjectStatusEnum.values()).toList());
+        }
+
+        return projectRepository.findByCompany(user, clientIds, statusList, filterByClientId, pageable).map(this::entityToDTO);
     }
 
     public ProjectDTO findById(UUID projectId, UserAccount user) {

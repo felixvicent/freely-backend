@@ -1,6 +1,5 @@
 package com.freely.backend.project;
 
-import com.freely.backend.client.Client;
 import com.freely.backend.user.UserAccount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +14,8 @@ import java.util.UUID;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
-    @Query("SELECT project FROM Project project WHERE project.company = :company AND (project.client.id IN :clientIds OR :filterByClientId = false)")
-    Page<Project> findByCompany(UserAccount company, List<UUID> clientIds, boolean filterByClientId, Pageable pageable);
+    @Query("SELECT project FROM Project project WHERE project.company = :company AND (project.client.id IN :clientIds OR :filterByClientId = false) AND project.status IN :statusList")
+    Page<Project> findByCompany(UserAccount company, List<UUID> clientIds, List<ProjectStatusEnum> statusList, boolean filterByClientId, Pageable pageable);
 
     Optional<Project> findByIdAndCompany(UUID id, UserAccount company);
 
