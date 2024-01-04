@@ -8,7 +8,6 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import com.freely.backend.authentication.StringHash;
-import com.freely.backend.client.ClientService;
 import com.freely.backend.mail.MailService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.web.user.dto.CreateUserForm;
@@ -212,7 +211,7 @@ public class UserService {
         return entityToDTO(user.get());
     }
 
-    private UserDTO entityToDTO(UserAccount user) {
+    public UserDTO entityToDTO(UserAccount user) {
         return UserDTO.builder()
                 .id(user.getId())
                 .name(user.getName())

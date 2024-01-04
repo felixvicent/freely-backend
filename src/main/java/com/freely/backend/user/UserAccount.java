@@ -48,6 +48,8 @@ public class UserAccount implements UserDetails {
 
     private String avatar;
 
+    private String office;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Set<Role> roles = new HashSet<>();
@@ -63,6 +65,9 @@ public class UserAccount implements UserDetails {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    private UserAccount company;
 
     @PrePersist
     public void setCreatedAt() {
