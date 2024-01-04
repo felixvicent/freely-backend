@@ -30,9 +30,6 @@ import com.freely.backend.web.user.dto.UserDTO;
 public class UserService {
 
     @Autowired
-    private ClientService clientService;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -203,6 +200,16 @@ public class UserService {
         var updatedUser = userRepository.save(user.get());
 
         return entityToDTO(updatedUser);
+    }
+
+    public UserDTO me(UUID userId) {
+        Optional <UserAccount> user = userRepository.findById(userId);
+
+        if(user.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
+
+        return entityToDTO(user.get());
     }
 
     private UserDTO entityToDTO(UserAccount user) {

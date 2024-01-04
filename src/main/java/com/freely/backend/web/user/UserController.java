@@ -109,4 +109,9 @@ public class UserController {
         return ResponseEntity.ok(userService.toggleActive(userId));
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?>me(@AuthenticationPrincipal UserAccount userAccount) {
+        return ResponseEntity.ok(userService.me(userAccount.getId()));
+    }
+
 }
