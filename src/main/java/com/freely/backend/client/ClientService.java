@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
+import com.freely.backend.user.UserService;
 import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.activity.dto.ActivityDTO;
 import com.freely.backend.web.project.dto.ProjectDTO;
@@ -27,11 +28,14 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private UserService userService;
 
-    public Page<ClientListDTO> findAll(UserAccount company, List<UUID> clientIds, Pageable pageable) {
+
+    public Page<ClientListDTO> findAll(UserAccount user, List<UUID> clientIds, Pageable pageable) {
         boolean filterById = clientIds != null;
 
-        return clientRepository.findByCompany(company, clientIds, filterById, pageable).map(this::entityToListDTO);
+        return clientRepository.findByCompany(user.getCompany(), clientIds, filterById, pageable).map(this::entityToListDTO);
     }
 
 
@@ -102,7 +106,7 @@ public class ClientService {
         return entityToPageDTO(client.get());
     }
 
-    public long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+    public long countByCompany(UserAccount user, LocalDate periodStart, LocalDate periodEnd) {
         LocalDate start = LocalDate.of(2000, 1, 1);
         LocalDate end = LocalDate.of(2100, 1, 1);
 
@@ -112,7 +116,7 @@ public class ClientService {
         if(periodEnd != null) {
             end = periodEnd;
         }
-        return clientRepository.countByCompany(company, start, end);
+        return clientRepository.countByCompany(user.getCompany(), start, end);
     }
 
     private ClientListDTO entityToListDTO(Client client) {

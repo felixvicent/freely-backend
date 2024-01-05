@@ -72,8 +72,8 @@ public class CollaboratorService {
         return userService.entityToDTO(userRepository.save(collaborator));
     }
 
-    public Page<UserDTO> listAll(UserAccount company, Pageable pageable){
-        return collaboratorRepository.findAll(company, pageable).map(collaborator -> userService.entityToDTO(collaborator));
+    public Page<UserDTO> listAll(UserAccount user, Pageable pageable){
+        return collaboratorRepository.findAll(user.getCompany(), pageable).map(collaborator -> userService.entityToDTO(collaborator));
     }
 
 }

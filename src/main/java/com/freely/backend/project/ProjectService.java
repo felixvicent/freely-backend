@@ -43,11 +43,11 @@ public class ProjectService {
             statusList.addAll(Arrays.stream(ProjectStatusEnum.values()).toList());
         }
 
-        return projectRepository.findByCompany(user, clientIds, statusList, filterByClientId, pageable).map(this::entityToDTO);
+        return projectRepository.findByCompany(user.getCompany(), clientIds, statusList, filterByClientId, pageable).map(this::entityToDTO);
     }
 
     public ProjectDTO findById(UUID projectId, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não existe");
@@ -58,7 +58,7 @@ public class ProjectService {
 
     @Transactional
     public ProjectDTO save(UserAccount user, ProjectForm form) {
-        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user.getCompany());
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -70,7 +70,7 @@ public class ProjectService {
         newProject.setValue(form.getValue());
         newProject.setEstimatedDate(form.getEstimatedDate());
         newProject.setClient(client.get());
-        newProject.setCompany(user);
+        newProject.setCompany(user.getCompany());
 
         projectRepository.save(newProject);
 
@@ -91,13 +91,13 @@ public class ProjectService {
 
     @Transactional
     public ProjectDTO update(UserAccount user, ProjectForm form, UUID id) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(id, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(id, user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
         }
 
-        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user);
+        Optional<Client> client = clientRepository.findByIdAndCompany(form.getClientId(), user.getCompany());
 
         if (client.isEmpty()) {
             throw new ResourceNotFoundException("Cliente não encontrado");
@@ -117,7 +117,7 @@ public class ProjectService {
     }
 
     public void delete(UserAccount user, UUID id) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(id, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(id, user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -139,10 +139,11 @@ public class ProjectService {
         if(periodEnd != null) {
             end = periodEnd;
         }
-        return projectRepository.countRevenue(user, start, end);
+
+        return projectRepository.countRevenue(user.getCompany(), start, end);
     }
 
-    public Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+    public Long countByCompany(UserAccount user, LocalDate periodStart, LocalDate periodEnd) {
         LocalDate start = LocalDate.of(2000, 1, 1);
         LocalDate end = LocalDate.of(2100, 1, 1);
 
@@ -152,11 +153,11 @@ public class ProjectService {
         if(periodEnd != null) {
             end = periodEnd;
         }
-        return projectRepository.countByCompany(company, start, end);
+        return projectRepository.countByCompany(user.getCompany(), start, end);
     }
 
     public ProjectDTO updateStatus(UserAccount user, ProjectStatusForm form, UUID projectId) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(projectId, user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");

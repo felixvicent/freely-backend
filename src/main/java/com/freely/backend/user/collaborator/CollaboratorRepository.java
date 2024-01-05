@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface CollaboratorRepository extends JpaRepository<UserAccount, UUID> {
 
-    @Query("SELECT collaborator FROM UserAccount collaborator WHERE company = :company")
+    @Query("SELECT collaborator FROM UserAccount collaborator INNER JOIN collaborator.roles roles WHERE 'USER' IN (roles.name) AND collaborator.company = :company")
     Page<UserAccount> findAll(UserAccount company, Pageable pageable);
 }

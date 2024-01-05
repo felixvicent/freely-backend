@@ -71,6 +71,7 @@ public class UserService {
 
         userAccount.getRoles().add(role);
         userAccount.setActive(false);
+        userAccount.setCompany(userAccount);
 
         var activeLink = frontendUrl + "/activeAccount?code=" + stringHash.hash(userAccount.getEmail());
 

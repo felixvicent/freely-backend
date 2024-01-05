@@ -27,11 +27,11 @@ public class ActivityService {
 
 
     public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UUID projectId, UserAccount user) {
-        return activityRepository.findByStatusAndCompany(status, projectId, user).stream().map(this::entityToDTO).toList();
+        return activityRepository.findByStatusAndCompany(status, projectId, user.getCompany()).stream().map(this::entityToDTO).toList();
     }
 
     public ActivityDTO create(ActivityForm form, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -48,7 +48,7 @@ public class ActivityService {
     }
 
     public ActivityDTO update(ActivityForm form, UUID activityId, UserAccount user) {
-        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user);
+        Optional<Project> project = projectRepository.findByIdAndCompany(form.getProjectId(), user.getCompany());
 
         if (project.isEmpty()) {
             throw new ResourceNotFoundException("Projeto não encontrado");
@@ -87,7 +87,7 @@ public class ActivityService {
         activityRepository.delete(activity.get());
     }
 
-    public Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd) {
+    public Long countByCompany(UserAccount user, LocalDate periodStart, LocalDate periodEnd) {
         LocalDate start = LocalDate.of(2000, 1, 1);
         LocalDate end = LocalDate.of(2100, 1, 1);
 
@@ -97,7 +97,7 @@ public class ActivityService {
         if(periodEnd != null) {
             end = periodEnd;
         }
-        return activityRepository.countByCompany(company, start, end);
+        return activityRepository.countByCompany(user.getCompany(), start, end);
     }
 
 
