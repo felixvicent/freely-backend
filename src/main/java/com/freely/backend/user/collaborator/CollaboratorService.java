@@ -4,6 +4,7 @@ import com.freely.backend.authentication.StringHash;
 import com.freely.backend.exceptions.ResourceAlreadyExistsException;
 import com.freely.backend.mail.MailService;
 import com.freely.backend.role.Role;
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.user.UserRepository;
 import com.freely.backend.user.UserService;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CollaboratorService {
@@ -72,8 +75,13 @@ public class CollaboratorService {
         return userService.entityToDTO(userRepository.save(collaborator));
     }
 
-    public Page<UserDTO> listAll(UserAccount user, Pageable pageable){
-        return collaboratorRepository.findAll(user.getCompany(), pageable).map(collaborator -> userService.entityToDTO(collaborator));
+    public Page<UserDTO> listAll(UserAccount user, List<UUID> collaboratorIds, Pageable pageable){
+        boolean filterById = collaboratorIds != null;
+
+        return collaboratorRepository.findByCompany(user.getCompany(), collaboratorIds, filterById, pageable).map(collaborator -> userService.entityToDTO(collaborator));
     }
 
+    public List<SuggestionDTO> getSuggestion(String query, UserAccount user) {
+        return collaboratorRepository.findSuggestions(query, user.getId()).stream().map(client -> SuggestionDTO.builder().label(client.getName()).value(client.getId()).build()).toList();
+    }
 }

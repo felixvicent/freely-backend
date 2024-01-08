@@ -1,7 +1,10 @@
 package com.freely.backend.web.collaborator;
 
+import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.user.UserAccount;
+import com.freely.backend.user.UserService;
 import com.freely.backend.user.collaborator.CollaboratorService;
+import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.collaborator.dto.CreateCollaboratorForm;
 import com.freely.backend.web.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/collaborators")
@@ -22,6 +27,9 @@ public class CollaboratorController {
 
     @Autowired
     private CollaboratorService collaboratorService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<UserDTO> create(@AuthenticationPrincipal UserAccount userAccount,
@@ -33,12 +41,30 @@ public class CollaboratorController {
 
     @GetMapping
     public ResponseEntity<Page<UserDTO>> list(@AuthenticationPrincipal UserAccount userAccount,
-                                              @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
+                                              @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable,
+                                              @RequestParam(required = false, value = "collaboratorIds[]") List<UUID> collaboratorIds) {
 
-        Page<UserDTO> collaborators = collaboratorService.listAll(userAccount, pageable);
+        Page<UserDTO> collaborators = collaboratorService.listAll(userAccount, collaboratorIds, pageable);
 
         return ResponseEntity.ok(collaborators);
     }
 
+    @GetMapping("/suggestion")
+    public ResponseEntity<List<SuggestionDTO>> getSuggestion(
+            @AuthenticationPrincipal UserAccount user,
+            @RequestParam String query,
+            @RequestParam(required = false) UUID selectedCollaboratorId) {
+
+        if (selectedCollaboratorId != null) {
+            UserDTO collaborator = userService.findById(selectedCollaboratorId);
+
+            List<SuggestionDTO> clients = collaboratorService.getSuggestion(collaborator.getName(), user);
+
+            return ResponseEntity.status(HttpStatus.OK).body(clients);
+        }
+        List<SuggestionDTO> collaborators = collaboratorService.getSuggestion(query, user);
+
+        return ResponseEntity.status(HttpStatus.OK).body(collaborators);
+    }
 
 }
