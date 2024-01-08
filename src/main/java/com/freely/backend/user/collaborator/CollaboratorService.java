@@ -118,4 +118,15 @@ public class CollaboratorService {
     public List<SuggestionDTO> getSuggestion(String query, UserAccount user) {
         return collaboratorRepository.findSuggestions(query, user.getId()).stream().map(client -> SuggestionDTO.builder().label(client.getName()).value(client.getId()).build()).toList();
     }
+
+    public void delete(UUID collaboratorId, UserAccount userAccount){
+        Optional<UserAccount> userToDelete = userRepository.findById(collaboratorId);
+
+        if (userToDelete.isEmpty()) {
+            throw new ResourceNotFoundException("Usuário não existe");
+        }
+
+        userRepository.delete(userToDelete.get());
+    }
+
 }

@@ -76,4 +76,12 @@ public class CollaboratorController {
         return ResponseEntity.status(HttpStatus.OK).body(collaborators);
     }
 
+    @DeleteMapping("/{collaboratorId}")
+    public ResponseEntity<?> delete(@AuthenticationPrincipal UserAccount userAccount,
+                                    @PathVariable UUID collaboratorId) {
+        collaboratorService.delete(collaboratorId, userAccount);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
