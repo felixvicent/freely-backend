@@ -234,6 +234,7 @@ public class UserService {
                 .active(user.isActive())
                 .role(user.getRoles().iterator().next().getName())
                 .createdAt(user.getCreatedAt())
+                .office(user.getOffice())
                 .build();
     }
 

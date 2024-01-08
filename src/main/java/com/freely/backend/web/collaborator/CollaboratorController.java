@@ -4,8 +4,8 @@ import com.freely.backend.suggestion.dto.SuggestionDTO;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.user.UserService;
 import com.freely.backend.user.collaborator.CollaboratorService;
-import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.collaborator.dto.CreateCollaboratorForm;
+import com.freely.backend.web.collaborator.dto.UpdateCollaboratorForm;
 import com.freely.backend.web.user.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +37,15 @@ public class CollaboratorController {
         UserDTO collaborator = collaboratorService.create(createCollaboratorForm, userAccount);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(collaborator);
+    }
+
+    @PutMapping("/{collaboratorId}")
+    public ResponseEntity<UserDTO> update(@AuthenticationPrincipal UserAccount userAccount,
+                                          @RequestBody @Valid UpdateCollaboratorForm form,
+                                          @PathVariable UUID collaboratorId) {
+        UserDTO updatedCollaborator = collaboratorService.update(form, collaboratorId, userAccount);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedCollaborator);
     }
 
     @GetMapping

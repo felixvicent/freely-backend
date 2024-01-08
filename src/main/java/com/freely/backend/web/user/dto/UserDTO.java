@@ -10,19 +10,13 @@ import lombok.Data;
 @Builder
 public class UserDTO {
     private UUID id;
-
     private String name;
-
     private String email;
-
     private String document;
-
     private String telephone;
-
     private Boolean active;
-
     private String role;
-
     private LocalDateTime createdAt;
+    private String office;
 
 }
