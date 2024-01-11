@@ -65,7 +65,7 @@ public class CollaboratorController {
             @RequestParam(required = false) UUID selectedCollaboratorId) {
 
         if (selectedCollaboratorId != null) {
-            UserDTO collaborator = userService.findById(selectedCollaboratorId);
+            UserDTO collaborator = userService.getById(selectedCollaboratorId);
 
             List<SuggestionDTO> clients = collaboratorService.getSuggestion(collaborator.getName(), user);
 

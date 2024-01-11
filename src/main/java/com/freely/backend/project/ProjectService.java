@@ -80,6 +80,7 @@ public class ProjectService {
             activity.setEstimatedDate(activityForm.getEstimatedDate());
             activity.setStatus(ActivityStatusEnum.PENDING);
             activity.setProject(newProject);
+            activity.setCompany(user.getCompany());
 
             activityRepository.save(activity);
         });

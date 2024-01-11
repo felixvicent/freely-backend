@@ -1,6 +1,5 @@
 package com.freely.backend.activity;
 
-import com.freely.backend.project.Project;
 import com.freely.backend.user.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,14 +13,20 @@ import java.util.UUID;
 public interface ActivityRepository extends JpaRepository<Activity, UUID> {
 
 
-    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.company = :company and activity.status = :status")
+    @Query("SELECT activity FROM Activity activity " +
+            "WHERE activity.company = :company " +
+            "AND activity.status = :status")
     List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company);
 
-    @Query("SELECT activity FROM Activity activity LEFT JOIN activity.project project WHERE project.id = :projectId AND project.company = :company and activity.status = :status")
+    @Query("SELECT activity FROM Activity activity " +
+            "LEFT JOIN activity.project project " +
+            "WHERE project.id = :projectId " +
+            "AND activity.company = :company " +
+            "AND activity.status = :status")
     List<Activity> findByStatusAndCompanyAndProject(ActivityStatusEnum status, UUID projectId, UserAccount company);
 
-    void deleteByProject(Project project);
-
-    @Query("SELECT COUNT(activity) FROM Activity activity LEFT JOIN activity.project project WHERE project.company = :company AND DATE(activity.createdAt) BETWEEN :periodStart AND :periodEnd")
+    @Query("SELECT COUNT(activity) FROM Activity activity " +
+            "WHERE activity.company = :company " +
+            "AND DATE(activity.createdAt) BETWEEN :periodStart AND :periodEnd")
     Long countByCompany(UserAccount company, LocalDate periodStart, LocalDate periodEnd);
 }

@@ -8,10 +8,8 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import com.freely.backend.authentication.StringHash;
-import com.freely.backend.client.Client;
 import com.freely.backend.mail.MailService;
 import com.freely.backend.suggestion.dto.SuggestionDTO;
-import com.freely.backend.web.clients.dto.ClientPageDTO;
 import com.freely.backend.web.user.dto.CreateUserForm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,7 +212,7 @@ public class UserService {
         return entityToDTO(user.get());
     }
 
-    public UserDTO findById(UUID userId) {
+    public UserDTO getById(UUID userId) {
         Optional<UserAccount> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
@@ -222,6 +220,16 @@ public class UserService {
         }
 
         return entityToDTO(user.get());
+    }
+
+    public UserAccount findById(UUID userId) {
+        Optional<UserAccount> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new ResourceNotFoundException("Cliente não encontrado");
+        }
+
+        return user.get();
     }
 
     public UserDTO entityToDTO(UserAccount user) {

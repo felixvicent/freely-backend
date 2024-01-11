@@ -1,6 +1,7 @@
 package com.freely.backend.activity;
 
 import com.freely.backend.project.Project;
+import com.freely.backend.user.UserAccount;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,6 +35,14 @@ public class Activity {
     private LocalDateTime estimatedDate;
 
     private LocalDateTime finishedAt;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "company_id", nullable = false)
+    private UserAccount company;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "responsible_id")
+    private UserAccount responsible;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

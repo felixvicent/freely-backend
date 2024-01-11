@@ -5,6 +5,7 @@ import com.freely.backend.activity.ActivityStatusEnum;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
 import com.freely.backend.web.activity.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.UpdateActivityResponsibleForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,5 +50,13 @@ public class ActivityController {
     @GetMapping("/{activityId}")
     public ResponseEntity<ActivityDTO> show(@PathVariable UUID activityId){
         return ResponseEntity.ok(activityService.show(activityId));
+    }
+
+    @PutMapping("/{activityId}/responsible/{userId}")
+    public ResponseEntity<?> updateResponsible(@PathVariable UUID activityId,
+                                               @RequestBody UpdateActivityResponsibleForm updateActivityResponsibleForm){
+        activityService.updateResponsible(activityId, updateActivityResponsibleForm);
+
+        return ResponseEntity.noContent().build();
     }
 }
