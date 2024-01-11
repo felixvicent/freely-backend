@@ -45,4 +45,9 @@ public class ActivityController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{activityId}")
+    public ResponseEntity<ActivityDTO> show(@PathVariable UUID activityId){
+        return ResponseEntity.ok(activityService.show(activityId));
+    }
 }

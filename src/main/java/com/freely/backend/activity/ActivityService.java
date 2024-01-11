@@ -103,6 +103,22 @@ public class ActivityService {
         return activityRepository.countByCompany(user.getCompany(), start, end);
     }
 
+    public Activity findById(UUID activityId) {
+        Optional<Activity> activity = activityRepository.findById(activityId);
+
+        if(activity.isEmpty()) {
+            throw new ResourceNotFoundException("Atividade não encontrada");
+        }
+
+        return activity.get();
+    }
+
+    public ActivityDTO show(UUID activityId) {
+        Activity activity = findById(activityId);
+
+        return entityToDTO(activity);
+    }
+
 
     private ActivityDTO entityToDTO(Activity activity) {
         return ActivityDTO.builder()
