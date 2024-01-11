@@ -15,15 +15,17 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
 
     @Query("SELECT activity FROM Activity activity " +
             "WHERE activity.company = :company " +
-            "AND activity.status = :status")
-    List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company);
+            "AND activity.status = :status "  +
+            "AND (activity.responsible.id IN :collaboratorsIds OR :filterByCollaboratorIds = false)")
+    List<Activity> findByStatusAndCompany(ActivityStatusEnum status, UserAccount company, List<UUID> collaboratorsIds, boolean filterByCollaboratorIds);
 
     @Query("SELECT activity FROM Activity activity " +
             "LEFT JOIN activity.project project " +
             "WHERE project.id = :projectId " +
             "AND activity.company = :company " +
-            "AND activity.status = :status")
-    List<Activity> findByStatusAndCompanyAndProject(ActivityStatusEnum status, UUID projectId, UserAccount company);
+            "AND activity.status = :status " +
+            "AND (activity.responsible.id IN :collaboratorsIds OR :filterByCollaboratorIds = false)")
+    List<Activity> findByStatusAndCompanyAndProject(ActivityStatusEnum status, UUID projectId, UserAccount company, List<UUID> collaboratorsIds, boolean filterByCollaboratorIds);
 
     @Query("SELECT COUNT(activity) FROM Activity activity " +
             "WHERE activity.company = :company " +

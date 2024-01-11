@@ -7,6 +7,7 @@ import com.freely.backend.user.collaborator.CollaboratorService;
 import com.freely.backend.web.collaborator.dto.CreateCollaboratorForm;
 import com.freely.backend.web.collaborator.dto.UpdateCollaboratorForm;
 import com.freely.backend.web.user.dto.UserDTO;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -82,6 +83,11 @@ public class CollaboratorController {
         collaboratorService.delete(collaboratorId, userAccount);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAll(@AuthenticationPrincipal UserAccount userAccount) {
+        return ResponseEntity.ok(collaboratorService.listAll(userAccount));
     }
 
 }

@@ -32,11 +32,13 @@ public class ActivityService {
     private UserService userService;
 
 
-    public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UUID projectId, UserAccount user) {
+    public List<ActivityDTO> findByStatus(ActivityStatusEnum status, UUID projectId, List<UUID> collaboratorsIds, UserAccount user) {
+        boolean filterByCollaboratorIds = collaboratorsIds != null;
+
         if(projectId == null) {
-            return  activityRepository.findByStatusAndCompany(status, user.getCompany()).stream().map(this::entityToDTO).toList();
+            return  activityRepository.findByStatusAndCompany(status, user.getCompany(), collaboratorsIds, filterByCollaboratorIds).stream().map(this::entityToDTO).toList();
         }
-        return activityRepository.findByStatusAndCompanyAndProject(status, projectId, user.getCompany()).stream().map(this::entityToDTO).toList();
+        return activityRepository.findByStatusAndCompanyAndProject(status, projectId, user.getCompany(), collaboratorsIds, filterByCollaboratorIds).stream().map(this::entityToDTO).toList();
     }
 
     public ActivityDTO create(ActivityForm form, UserAccount user) {

@@ -115,8 +115,12 @@ public class CollaboratorService {
         return collaboratorRepository.findByCompany(user.getCompany(), collaboratorIds, filterById, pageable).map(collaborator -> userService.entityToDTO(collaborator));
     }
 
+    public List<UserDTO> listAll(UserAccount user){
+        return collaboratorRepository.listAllByCompany(user.getCompany()).stream().map(collaborator -> userService.entityToDTO(collaborator)).toList();
+    }
+
     public List<SuggestionDTO> getSuggestion(String query, UserAccount user) {
-        return collaboratorRepository.findSuggestions(query, user.getId()).stream().map(client -> SuggestionDTO.builder().label(client.getName()).value(client.getId()).build()).toList();
+        return collaboratorRepository.findSuggestions(query, user.getCompany().getId()).stream().map(client -> SuggestionDTO.builder().label(client.getName()).value(client.getId()).build()).toList();
     }
 
     public void delete(UUID collaboratorId, UserAccount userAccount){

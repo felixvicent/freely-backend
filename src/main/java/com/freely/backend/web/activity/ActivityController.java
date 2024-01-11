@@ -24,8 +24,9 @@ public class ActivityController {
     @GetMapping
     public ResponseEntity<List<ActivityDTO>> getByStatus(@AuthenticationPrincipal UserAccount user,
                                                          @RequestParam ActivityStatusEnum status,
-                                                         @RequestParam(name = "projectId", required = false) UUID projectId) {
-        List<ActivityDTO> activities = activityService.findByStatus(status, projectId, user);
+                                                         @RequestParam(name = "projectId", required = false) UUID projectId,
+                                                         @RequestParam(required = false, value = "collaboratorsIds[]") List<UUID> collaboratorsIds) {
+        List<ActivityDTO> activities = activityService.findByStatus(status, projectId, collaboratorsIds, user);
 
         return ResponseEntity.ok(activities);
     }
