@@ -1,5 +1,7 @@
 package com.freely.backend.activity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.freely.backend.comment.Comment;
 import com.freely.backend.project.Project;
 import com.freely.backend.user.UserAccount;
 import lombok.Getter;
@@ -9,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -46,6 +50,10 @@ public class Activity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "responsible_id")
     private UserAccount responsible;
+
+    @OrderBy("created_at DESC")
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
+    private Set<Comment> comments = new HashSet<>();
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
