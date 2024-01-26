@@ -21,4 +21,5 @@ public class ActivityDTO {
     private LocalDateTime estimatedDate;
     private LocalDateTime finishedAt;
     private UserDTO responsible;
+    private String description;
 }

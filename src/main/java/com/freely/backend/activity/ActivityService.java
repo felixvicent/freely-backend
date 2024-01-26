@@ -8,6 +8,7 @@ import com.freely.backend.user.UserAccount;
 import com.freely.backend.user.UserService;
 import com.freely.backend.web.activity.dto.ActivityForm;
 import com.freely.backend.web.activity.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.UpdateActivityDescriptionForm;
 import com.freely.backend.web.activity.dto.UpdateActivityResponsibleForm;
 import com.freely.backend.web.project.dto.ProjectDTO;
 import com.freely.backend.web.user.dto.UserDTO;
@@ -55,6 +56,7 @@ public class ActivityService {
         activity.setStatus(ActivityStatusEnum.PENDING);
         activity.setProject(project.get());
         activity.setCompany(user.getCompany());
+        activity.setResponsible(user);
 
         return entityToDTO(activityRepository.save(activity));
     }
@@ -142,6 +144,17 @@ public class ActivityService {
         activityRepository.save(activity);
     }
 
+    public ActivityDTO updateDescription(UUID activityId, UpdateActivityDescriptionForm updateActivityDescriptionForm){
+        Activity activity = findById(activityId);
+
+        if(updateActivityDescriptionForm.getDescription() == null) {
+            activity.setDescription(null);
+        } else {
+            activity.setDescription(updateActivityDescriptionForm.getDescription());
+        }
+
+        return entityToDTO(activityRepository.save(activity));
+    }
 
     private ActivityDTO entityToDTO(Activity activity) {
         ActivityDTO dto = ActivityDTO.builder()
@@ -151,6 +164,7 @@ public class ActivityService {
                 .createdAt(activity.getCreatedAt())
                 .estimatedDate(activity.getEstimatedDate())
                 .finishedAt(activity.getFinishedAt())
+                .description(activity.getDescription())
                 .project(ProjectDTO.builder()
                         .id(activity.getProject().getId())
                         .value(activity.getProject().getValue())

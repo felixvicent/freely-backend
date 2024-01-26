@@ -5,6 +5,7 @@ import com.freely.backend.activity.ActivityStatusEnum;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.activity.dto.ActivityForm;
 import com.freely.backend.web.activity.dto.ActivityDTO;
+import com.freely.backend.web.activity.dto.UpdateActivityDescriptionForm;
 import com.freely.backend.web.activity.dto.UpdateActivityResponsibleForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,11 +54,17 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.show(activityId));
     }
 
-    @PutMapping("/{activityId}/responsible/{userId}")
+    @PutMapping("/{activityId}/responsible")
     public ResponseEntity<?> updateResponsible(@PathVariable UUID activityId,
                                                @RequestBody UpdateActivityResponsibleForm updateActivityResponsibleForm){
         activityService.updateResponsible(activityId, updateActivityResponsibleForm);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{activityId}/description")
+    public ResponseEntity<?> updateDescription(@PathVariable UUID activityId,
+                                               @RequestBody UpdateActivityDescriptionForm updateActivityDescriptionForm){
+        return ResponseEntity.ok(activityService.updateDescription(activityId, updateActivityDescriptionForm));
     }
 }
