@@ -14,6 +14,3 @@ CREATE TABLE public.users_properties
         ON DELETE CASCADE
         NOT VALID
 );
-
-ALTER TABLE IF EXISTS public.users_properties
-    OWNER to postgres;
