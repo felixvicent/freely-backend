@@ -1,6 +1,6 @@
 package com.freely.backend.web.integrations.asaas;
 
-import com.freely.backend.integration.asaas.IntegrationAsassService;
+import com.freely.backend.integration.asaas.IntegrationAsaasService;
 import com.freely.backend.user.UserAccount;
 import com.freely.backend.web.integrations.asaas.dto.IntegrationAsaasForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/integrations/asaas")
 public class IntegrationAsassController {
     @Autowired
-    private IntegrationAsassService integrationAsassService;
+    private IntegrationAsaasService integrationAsassService;
 
     @GetMapping
     public ResponseEntity<?> index(@AuthenticationPrincipal UserAccount userAccount){

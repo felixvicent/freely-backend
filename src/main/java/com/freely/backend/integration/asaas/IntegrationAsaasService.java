@@ -6,7 +6,6 @@ import com.freely.backend.user.user_properties.UserPropertyDomainEnum;
 import com.freely.backend.user.user_properties.UserPropertyService;
 import com.freely.backend.user.user_properties.dto.UserPropertyDTO;
 import com.freely.backend.web.integrations.asaas.dto.IntegrationAsaasForm;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class IntegrationAsassService {
+public class IntegrationAsaasService {
     @Autowired
     private UserPropertyService userPropertyService;
 
