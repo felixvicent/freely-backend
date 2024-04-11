@@ -2,6 +2,7 @@ package com.freely.backend.payment.payment_asaas;
 
 import com.freely.backend.client.client_asaas.ClientAsaas;
 import com.freely.backend.client.client_asaas.ClientAsaasService;
+import com.freely.backend.payment.Payment;
 import com.freely.backend.payment.payment_asaas.dto.PaymentAsaasDTO;
 import com.freely.backend.project.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class PaymentAsaasService {
     @Autowired
     private PaymentAsaasHttpService paymentAsaasHttpService;
 
-    public PaymentAsaasDTO generate(Project project){
+    public PaymentAsaasDTO generate(Project project, Payment payment){
         ClientAsaas clientAsaas = clientAsaasService.getClient(project.getClient());
 
         LocalDate today = LocalDate.now();
@@ -27,6 +28,6 @@ public class PaymentAsaasService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDueDate = dueDate.format(formatter);
 
-        return paymentAsaasHttpService.createPayment(project, clientAsaas, formattedDueDate);
+        return paymentAsaasHttpService.createPayment(project, payment, clientAsaas, formattedDueDate);
     }
 }

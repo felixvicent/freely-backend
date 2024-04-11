@@ -35,6 +35,7 @@ public class SecurityConfiguration {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/").permitAll()
+                .antMatchers(HttpMethod.POST, "/payments/callback").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf()
                 .disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

@@ -2,6 +2,7 @@ package com.freely.backend.payment.payment_asaas;
 
 import com.freely.backend.client.client_asaas.ClientAsaas;
 import com.freely.backend.integration.asaas.IntegrationAsaasService;
+import com.freely.backend.payment.Payment;
 import com.freely.backend.payment.payment_asaas.dto.PaymentAsaasDTO;
 import com.freely.backend.payment.payment_asaas.dto.PaymentAsaasForm;
 import com.freely.backend.project.Project;
@@ -23,7 +24,7 @@ public class PaymentAsaasHttpService {
     @Value("${asaas.baseUrl}")
     private String asaasBaseUrl;
 
-    public PaymentAsaasDTO createPayment(Project project, ClientAsaas clientAsaas, String dueDate) {
+    public PaymentAsaasDTO createPayment(Project project, Payment payment, ClientAsaas clientAsaas, String dueDate) {
         HttpHeaders httpHeaders = getHeader(project);
         RestTemplate restTemplate = new RestTemplate();
 
@@ -33,7 +34,7 @@ public class PaymentAsaasHttpService {
         paymentAsaasForm.setValue(project.getValue());
         paymentAsaasForm.setDueDate(dueDate);
         paymentAsaasForm.setDescription(project.getTitle());
-        paymentAsaasForm.setExternalReference(project.getId().toString());
+        paymentAsaasForm.setExternalReference(payment.getId().toString());
         paymentAsaasForm.setBillingType("UNDEFINED");
 
         HttpEntity<PaymentAsaasForm> request = new HttpEntity<>(paymentAsaasForm, httpHeaders);

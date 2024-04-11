@@ -8,4 +8,5 @@ public class PaymentAsaasDTO {
     private String invoiceUrl;
     private String invoiceNumber;
     private String status;
+    private String externalReference;
 }
